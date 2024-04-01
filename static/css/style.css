@@ -1,0 +1,17 @@
+body {
+    background-color: gray;
+    opacity: 0.7;
+}
+
+#title {
+    color: bisque;
+    text-align: center;
+}
+
+.button {
+    text-align: center;
+}
+
+#todos-container{
+    text-align: center;
+}

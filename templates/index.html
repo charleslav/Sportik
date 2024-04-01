@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo list</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="../static/js/app.js"></script>
+</head>
+
+<body>
+    <div id="title">
+        <h1> Welcome to my first database</h1>
+    </div>
+
+    <div class="button">
+        <input type="text" id="todo-input" placeholder="Add something"/>
+        <button type="button" onclick="onButtonClick()">Add</button>
+    </div>
+
+    <div id="todos-container">
+
+    </div>
+</body>
+
+</html>
