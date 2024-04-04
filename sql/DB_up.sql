@@ -6,7 +6,7 @@ USE Sportik;
 CREATE TABLE Product(pid integer NOT NULL DEFAULT 0,
                      product_name varchar(100) NOT NULL,
                      product_rating integer NOT NULL,
-                     product_image varchar(250) NOT NULL,
+                     product_image LONGBLOB NOT NULL, #LONGBLOB permet le stockage d'image de moins de 1mb par défaut, mais peut être changé dans le parametre du serveur
                      description varchar(2000) NOT NULL,
                      PRIMARY KEY (pid),
                      constraint CT_Rating_Range CHECK (product_rating BETWEEN 0 AND 5));
@@ -45,7 +45,7 @@ CREATE TABLE Provider (provider_id integer NOT NULL DEFAULT 0,
                        provider_name varchar(100) NOT NULL,
                        is_featured bool NOT NULL,
                        provider_order_number integer NOT NULL,
-                       featured_image varchar(250) NOT NULL,
+                       featured_image LONGBLOB NOT NULL,
                        PRIMARY KEY (provider_id));
 
 CREATE TABLE Product_Packaging (ppid integer NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE Discount (did integer NOT NULL,
 
 CREATE TABLE Product_Model_Image (pmid INTEGER,
                                  thumbnail varchar(400) NOT NULL,
-                                 image varchar(400) NOT NULL,
+                                 image LONGBLOB NOT NULL,
                                  PRIMARY KEY(pmid));
 
 CREATE TABLE Orders (order_id integer NOT NULL,
