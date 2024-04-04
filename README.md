@@ -28,6 +28,7 @@ Autre aspect:
 
 
 Base de données
+
 Fournisseur (Vendeur):
     -idFournisseur
     -nom
