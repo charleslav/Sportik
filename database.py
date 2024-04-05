@@ -57,8 +57,8 @@ def generate_customer_data(cursor, fake):
             VALUES("{name}", '{username}', '{password}', '{age}', '{email}', '{customer_adress}');"""
         cursor.execute(request)
 
-def generate_product_data(cursor, fake):
-    for i in range(10):
+def generate_product_data(cursor):
+    for i in range(1):
         product_name = "Jordan"
         product_rating = random.randint(0,5)
         product_image = "Sportik/images/Jordan.png"
@@ -66,7 +66,7 @@ def generate_product_data(cursor, fake):
         request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
         VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
         cursor.execute(request)
-    for i in range(10):
+    for i in range(1):
         product_name = "Adidas"
         product_rating = random.randint(0,5)
         product_image = "Sportik/images/Adidas.png"
@@ -74,7 +74,7 @@ def generate_product_data(cursor, fake):
         request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
         VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
         cursor.execute(request)
-    for i in range(10):
+    for i in range(1):
         product_name = "Under Armour"
         product_rating = random.randint(0,5)
         product_image = "Sportik/images/Under_Armour.png"
@@ -82,7 +82,7 @@ def generate_product_data(cursor, fake):
         request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
         VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
         cursor.execute(request)
-    for i in range(10):
+    for i in range(1):
         product_name = "Puma"
         product_rating = random.randint(0, 5)
         product_image = "Sportik/images/Puma.png"
@@ -90,14 +90,55 @@ def generate_product_data(cursor, fake):
         request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
         VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
         cursor.execute(request)
-    for i in range(10):
+    for i in range(1):
         product_name = "New Balance"
         product_rating = random.randint(0, 5)
-        product_image = "Sportik/images/New Balance.png"
-        description = "(NB), best known as simply New Balance, is one of the worlds major sports footwear and apparel manufacturers. Based in Boston, Massachusetts, the multinational corporation was founded in 1906 as the New Balance Arch Support Company."
+        product_image = "Sportik/images/New_Balance.png"
+        description = "New Balance is one of the worlds major sports footwear and apparel manufacturers. Based in Boston, Massachusetts, the multinational corporation was founded in 1906 as the New Balance Arch Support Company."
         request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
         VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
         cursor.execute(request)
+    for i in range(1):
+        product_name = "Reebook"
+        product_rating = random.randint(0, 5)
+        product_image = "Sportik/images/Reebook.png"
+        description = "Reebok International Limited is an American footwear and clothing company founded in Bolton, England, and headquartered in Boston, Massachusetts. Since 2005, the company is subsidiary of German sporting goods giant Adidas. Reebok produces and distributes fitness, running and CrossFit sportswear including clothing and footwear."
+        request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
+        VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
+        cursor.execute(request)
+    for i in range(1):
+        product_name = "Fila"
+        product_rating = random.randint(0, 5)
+        product_image = "Sportik/images/Fila.png"
+        description = "Fila is an Italian-South Korean sporting goods company founded in 1911 in Biella, Italy, and now based in Seoul."
+        request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
+        VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
+        cursor.execute(request)
+    for i in range(1):
+        product_name = "Vans"
+        product_rating = random.randint(0, 5)
+        product_image = "Sportik/images/Vans.png"
+        description = "Vans is an American manufacturer of skateboarding shoes and related apparel, based in Santa Ana, California, owned by VF Corporation."
+        request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
+        VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
+        cursor.execute(request)
+    for i in range(1):
+        product_name = "Asics"
+        product_rating = random.randint(0, 5)
+        product_image = "Sportik/images/Asics.png"
+        description = "Asics is a Japanese multinational corporation which produces sports equipment designed for a wide range of sports."
+        request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
+        VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
+        cursor.execute(request)
+    for i in range(1):
+        product_name = "Brooks"
+        product_rating = random.randint(0, 5)
+        product_image = "Sportik/images/Brooks.png"
+        description = "Brooks is an American athletic footwear brand known for its innovative designs and high-performance running shoes. Founded in 1914, Brooks has a long history of providing runners with comfortable and durable footwear engineered to enhance performance and prevent injury. Whether you're a seasoned marathoner or a casual jogger, Brooks shoes are designed to provide optimal support, cushioning, and stability to help you achieve your running goals. With a commitment to quality and innovation, Brooks continues to be a trusted choice for runners of all levels around the world."
+        request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
+        VALUES('{product_name}', {product_rating}, '{product_image}', '{description}');"""
+        cursor.execute(request)
+
 
 
 
@@ -107,6 +148,6 @@ if __name__ == '__main__':
     fake = Faker()
     cursor = db.cursor  # Access the cursor from the Database instance
     generate_customer_data(cursor, fake)
-    generate_product_data(cursor, fake)
+    generate_product_data(cursor)
     cursor.execute(create_table)
 

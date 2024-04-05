@@ -1,6 +1,7 @@
 #Creation de la Database
 CREATE DATABASE Sportik;
 USE Sportik;
+SELECT * FROM Product;
 /*
 Pour les auto increment (W3 Schools)
 
@@ -93,8 +94,8 @@ CREATE TABLE IF NOT EXISTS Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            price decimal DEFAULT 0 NOT NULL,
                            quantity integer NOT NULL,
                            product_id integer NOT NULL,
-                           discount_id integer NOT NULL,
-                           packaging_id integer NOT NULL,
+                           discount_id integer,
+                           packaging_id integer,
                            upc varchar(13) UNIQUE NOT NULL,  #doute x2
                            sku varchar(14) UNIQUE NOT NULL,  #doute x2
                            PRIMARY KEY (pmid),
