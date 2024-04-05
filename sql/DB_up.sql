@@ -31,9 +31,9 @@ CREATE TABLE Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            product_name varchar(200) UNIQUE NOT NULL,
                            price decimal DEFAULT 0 NOT NULL,
                            quantity integer NOT NULL,
-                           product_id integer,
-                           discount_id integer,
-                           packaging_id integer,
+                           product_id integer NOT NULL,
+                           discount_id integer NOT NULL,
+                           packaging_id integer NOT NULL,
                            upc varchar(13) UNIQUE NOT NULL,  #doute x2
                            sku varchar(14) UNIQUE NOT NULL,  #doute x2
                            PRIMARY KEY (pmid),
@@ -107,7 +107,19 @@ CREATE TABLE Cart  (pmid integer NOT NULL,
                     FOREIGN KEY (cid) REFERENCES Customer(cid)
                     );
 
+/*
+ Cette table permet de regrouper le Product et sa Categorie dans une table pour savoir quel est la categorie d'un produit
+ */
 CREATE TABLE Product_isClassifiedAs_Category (pid integer NOT NULL,
                                               catid integer NOT NULL,
                                               FOREIGN KEY (pid) REFERENCES Product(pid),
                                               FOREIGN KEY (catid) REFERENCES Category(catid));
+
+/*
+ Cette table permet de regrouper le Product Model et son type de Produit dans une table pour savoir quel variation de produit est associe
+ a un produit.
+ */
+CREATE TABLE ProductModel_ISA_Product (product_model_id integer NOT NULL,
+                                       product_id integer NOT NULL,
+                                       FOREIGN KEY (product_model_id) REFERENCES Product_Model(pmid),
+                                       FOREIGN KEY (product_id) REFERENCES Product(pid));
