@@ -16,8 +16,57 @@ INCREMENT BY 1
 CACHE 10;
 */
 
-#Creation des tables
-CREATE TABLE Product(pid integer AUTO_INCREMENT NOT NULL,
+#Creation des tables #1
+CREATE TABLE IF NOT EXISTS Category (catid integer AUTO_INCREMENT NOT NULL,
+                       category_name varchar(30) NOT NULL,
+                       parent_category_id varchar(20),
+                       PRIMARY KEY (catid)); #CATEGORIE DUNE CATÉGORIE
+
+CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT NOT NULL,
+                       name varchar(35) NOT NULL,
+                       username varchar(50) UNIQUE NOT NULL,
+                       password varchar(50) NOT NULL,
+                       age tinyint NOT NULL check(age > 16),
+                       email varchar(40) UNIQUE NOT NULL,
+                       creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       card_total_price integer DEFAULT 0,
+                       PRIMARY KEY(cid));
+
+#Changer order et regarder le datatype de is_featured pour le bool
+CREATE TABLE IF NOT EXISTS Provider (provider_id integer AUTO_INCREMENT NOT NULL,
+                       provider_name varchar(100) NOT NULL,
+                       is_featured bool NOT NULL,
+                       provider_order_number integer NOT NULL,
+                       featured_image varchar(250) NOT NULL,
+                       PRIMARY KEY (provider_id));
+
+CREATE TABLE IF NOT EXISTS Product_Packaging (ppid integer AUTO_INCREMENT NOT NULL,
+                               dimension varchar(25) NOT NULL DEFAULT 5,
+                               weight decimal NOT NULL DEFAULT 1,
+                               packaging_material varchar(30) NOT NULL,
+                               PRIMARY KEY (ppid));
+
+CREATE TABLE IF NOT EXISTS Discount (did integer AUTO_INCREMENT NOT NULL,
+                      discount_rate decimal DEFAULT NULL,
+                      discount_amount decimal DEFAULT NULL,
+                      start_date date,
+                      end_date date,
+                      PRIMARY KEY(did));
+
+CREATE TABLE IF NOT EXISTS Product_Model_Image (product_model_image_id INTEGER AUTO_INCREMENT NOT NULL,
+                                 thumbnail varchar(250) NOT NULL,
+                                 image varchar(250) NOT NULL,
+                                 PRIMARY KEY(product_model_image_id));
+
+CREATE TABLE IF NOT EXISTS Orders (order_id integer AUTO_INCREMENT NOT NULL,
+                     payment_method varchar(20) NOT NULL,
+                     payment_status ENUM ('Succes', 'In Progress', 'Denied') NOT NULL,
+                     order_date DATE NOT NULL,
+                     order_status ENUM ('Succes', 'In Progress', 'Canceled') NOT NULL,
+                     PRIMARY KEY (order_id));
+
+#Creation des tables #2
+CREATE TABLE IF NOT EXISTS Product(pid integer AUTO_INCREMENT NOT NULL,
                      product_name varchar(100) NOT NULL,
                      product_rating integer NOT NULL,
                      product_image varchar(250) NOT NULL,
@@ -27,7 +76,7 @@ CREATE TABLE Product(pid integer AUTO_INCREMENT NOT NULL,
                      FOREIGN KEY (provider_id) REFERENCES Provider(provider_id),
                      constraint CT_Rating_Range CHECK (product_rating BETWEEN 0 AND 5));
 
-CREATE TABLE Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            product_name varchar(200) UNIQUE NOT NULL,
                            price decimal DEFAULT 0 NOT NULL,
                            quantity integer NOT NULL,
@@ -41,22 +90,7 @@ CREATE TABLE Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            FOREIGN KEY (discount_id) REFERENCES Discount(did),
                            FOREIGN KEY (packaging_id) REFERENCES Product_Packaging(ppid));
 
-CREATE TABLE Category (catid integer AUTO_INCREMENT NOT NULL,
-                       category_name varchar(30) NOT NULL,
-                       parent_category_id varchar(20),
-                       PRIMARY KEY (catid)); #CATEGORIE DUNE CATÉGORIE
-
-CREATE TABLE Customer (cid integer AUTO_INCREMENT NOT NULL,
-                       name varchar(35) NOT NULL,
-                       username varchar(50) UNIQUE NOT NULL,
-                       password varchar(50) NOT NULL,
-                       age tinyint NOT NULL check(age > 16),
-                       email varchar(40) UNIQUE NOT NULL,
-                       creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       card_total_price integer DEFAULT 0,
-                       PRIMARY KEY(cid));
-
-CREATE TABLE Customer_review (crid integer AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS Customer_review (crid integer AUTO_INCREMENT NOT NULL,
                               customer_id integer,
                               productModel_id integer,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -65,40 +99,7 @@ CREATE TABLE Customer_review (crid integer AUTO_INCREMENT NOT NULL,
                               FOREIGN KEY (customer_id) REFERENCES Customer(cid),
                               FOREIGN KEY (productModel_id) REFERENCES Product_Model(pmid));#STARS ?
 
-#Changer order et regarder le datatype de is_featured pour le bool
-CREATE TABLE Provider (provider_id integer AUTO_INCREMENT NOT NULL,
-                       provider_name varchar(100) NOT NULL,
-                       is_featured bool NOT NULL,
-                       provider_order_number integer NOT NULL,
-                       featured_image varchar(250) NOT NULL,
-                       PRIMARY KEY (provider_id));
-
-CREATE TABLE Product_Packaging (ppid integer AUTO_INCREMENT NOT NULL,
-                               dimension varchar(25) NOT NULL DEFAULT 5,
-                               weight decimal NOT NULL DEFAULT 1,
-                               packaging_material varchar(30) NOT NULL,
-                               PRIMARY KEY (ppid));
-
-CREATE TABLE Discount (did integer AUTO_INCREMENT NOT NULL,
-                      discount_rate decimal DEFAULT NULL,
-                      discount_amount decimal DEFAULT NULL,
-                      start_date date,
-                      end_date date,
-                      PRIMARY KEY(did));
-
-CREATE TABLE Product_Model_Image (product_model_image_id INTEGER AUTO_INCREMENT NOT NULL,
-                                 thumbnail varchar(250) NOT NULL,
-                                 image varchar(250) NOT NULL,
-                                 PRIMARY KEY(product_model_image_id));
-
-CREATE TABLE Orders (order_id integer AUTO_INCREMENT NOT NULL,
-                     payment_method varchar(20) NOT NULL,
-                     payment_status ENUM ('Succes', 'In Progress', 'Denied') NOT NULL,
-                     order_date DATE NOT NULL,
-                     order_status ENUM ('Succes', 'In Progress', 'Canceled') NOT NULL,
-                     PRIMARY KEY (order_id));
-
-CREATE TABLE Cart  (pmid integer NOT NULL,
+CREATE TABLE IF NOT EXISTS Cart  (pmid integer NOT NULL,
                     cid integer NOT NULL,
                     item_total DECIMAL(10,2) DEFAULT NULL,
                     quantity integer DEFAULT 1 NOT NULL,
@@ -110,7 +111,7 @@ CREATE TABLE Cart  (pmid integer NOT NULL,
 /*
  Cette table permet de regrouper le Product et sa Categorie dans une table pour savoir quel est la categorie d'un produit
  */
-CREATE TABLE Product_isClassifiedAs_Category (pid integer NOT NULL,
+CREATE TABLE IF NOT EXISTS Product_isClassifiedAs_Category (pid integer NOT NULL,
                                               catid integer NOT NULL,
                                               FOREIGN KEY (pid) REFERENCES Product(pid),
                                               FOREIGN KEY (catid) REFERENCES Category(catid));
@@ -119,7 +120,7 @@ CREATE TABLE Product_isClassifiedAs_Category (pid integer NOT NULL,
  Cette table permet de regrouper le Product Model et son type de Produit dans une table pour savoir quel variation de produit est associe
  a un produit.
  */
-CREATE TABLE ProductModel_ISA_Product (product_model_id integer NOT NULL,
+CREATE TABLE IF NOT EXISTS ProductModel_ISA_Product (product_model_id integer NOT NULL,
                                        product_id integer NOT NULL,
                                        FOREIGN KEY (product_model_id) REFERENCES Product_Model(pmid),
                                        FOREIGN KEY (product_id) REFERENCES Product(pid));
