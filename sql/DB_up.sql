@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT NOT NULL,
                        password varchar(50) NOT NULL,
                        age tinyint NOT NULL check(age > 16),
                        email varchar(40) UNIQUE NOT NULL,
-                       creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       customer_adresss varchar(255) UNIQUE NOT NULL,
+                       creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                        card_total_price integer DEFAULT 0,
                        PRIMARY KEY(cid));
 ALTER TABLE Customer AUTO_INCREMENT=2000000;
