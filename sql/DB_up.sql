@@ -31,9 +31,15 @@ CREATE TABLE Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            product_name varchar(200) UNIQUE NOT NULL,
                            price decimal DEFAULT 0 NOT NULL,
                            quantity integer NOT NULL,
+                           product_id integer,
+                           discount_id integer,
+                           packaging_id integer,
                            upc varchar(13) UNIQUE NOT NULL,  #doute x2
                            sku varchar(14) UNIQUE NOT NULL,  #doute x2
-                           PRIMARY KEY (pmid));
+                           PRIMARY KEY (pmid),
+                           FOREIGN KEY (product_id) REFERENCES Product(pid),
+                           FOREIGN KEY (discount_id) REFERENCES Discount(did),
+                           FOREIGN KEY (packaging_id) REFERENCES Product_Packaging(ppid));
 
 CREATE TABLE Category (catid integer AUTO_INCREMENT NOT NULL,
                        category_name varchar(30) NOT NULL,
