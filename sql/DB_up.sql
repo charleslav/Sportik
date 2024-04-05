@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Category (catid integer AUTO_INCREMENT NOT NULL,
                        parent_category_id integer NOT NULL,
                         is_active BOOLEAN DEFAULT TRUE,
                        PRIMARY KEY (catid), #CATEGORIE DUNE CATÉGORIE
-                       FOREIGN KEY (parent_category_id) REFERENCES Category(parent_category_id));
+                       FOREIGN KEY (parent_category_id) REFERENCES Category(catid));
 ALTER TABLE Category AUTO_INCREMENT=1000000;
 INSERT INTO Category(catid,category_name,parent_category_id, is_active) VALUES ();
 
@@ -50,7 +50,7 @@ ALTER TABLE  Provider AUTO_INCREMENT=3000000;
 INSERT INTO Provider(provider_id, provider_name, is_featured, provider_order_number, featured_image) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Product_Packaging (ppid integer AUTO_INCREMENT NOT NULL,
-                               dimension varchar(25) NOT NULL DEFAULT 5,
+                               dimension ENUM('kg', 'lb') NOT NULL DEFAULT 'kg',
                                weight decimal NOT NULL DEFAULT 1,
                                packaging_material varchar(30) NOT NULL,
                                PRIMARY KEY (ppid));
@@ -62,16 +62,20 @@ CREATE TABLE IF NOT EXISTS Discount (did integer AUTO_INCREMENT NOT NULL,
                       discount_amount decimal DEFAULT NULL,
                       start_date date,
                       end_date date,
+                      is_active BOOLEAN DEFAULT FALSE,                               /* va etre activer comme true lorsque start_date va etre hit, false lorsque end_date va hit */
                       PRIMARY KEY(did));
 ALTER TABLE Discount AUTO_INCREMENT=4000000;
 INSERT INTO Discount(did, discount_rate, discount_amount, start_date, end_date) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Product_Model_Image (product_model_image_id INTEGER AUTO_INCREMENT NOT NULL,
-                                 thumbnail varchar(250) NOT NULL,
+                                product_model_id integer NOT NULL,
+                                image_type ENUM('thumbnail', 'main', 'gallery', 'zoomed') NOT NULL DEFAULT 'main', /*selectionner on veut presenter les images a quel endroit
+                   /*              thumbnail varchar(250) NOT NULL,                      a enlever probablement */
                                  image varchar(250) NOT NULL,
-                                 PRIMARY KEY(product_model_image_id));
+                                 PRIMARY KEY(product_model_image_id),
+                                 FOREIGN KEY(product_model_id) REFERENCES Product_Model(pmid));
 ALTER TABLE Product_Model_Image AUTO_INCREMENT=5000000;
-INSERT INTO Product_Model_Image(product_model_image_id, thumbnail, image) VALUES ();
+INSERT INTO Product_Model_Image(product_model_id, image_type, image) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Orders (order_id integer AUTO_INCREMENT NOT NULL,
                      payment_method varchar(20) NOT NULL,
@@ -123,13 +127,13 @@ INSERT INTO Customer_review(crid, customer_id, productModel_id, created_at, item
 
 CREATE TABLE IF NOT EXISTS Cart  (pmid integer NOT NULL,
                     cid integer NOT NULL,
-                    item_total DECIMAL(10,2) DEFAULT NULL,
+                    total_amount DECIMAL(10,2) DEFAULT NULL,
                     quantity integer DEFAULT 1 NOT NULL,
                     item_discount_total DECIMAL(10,2) DEFAULT NULL,
                     FOREIGN KEY (pmid) REFERENCES Product_Model(pmid),
                     FOREIGN KEY (cid) REFERENCES Customer(cid));
 ALTER TABLE Cart AUTO_INCREMENT=10000000;
-INSERT INTO Cart(pmid, cid, item_total, quantity, item_discount_total) VALUES ();
+INSERT INTO Cart(pmid, cid, total_amount, quantity, item_discount_total) VALUES ();
 
 /*
  Cette table permet de regrouper le Product et sa Categorie dans une table pour savoir quel est la categorie d'un produit
