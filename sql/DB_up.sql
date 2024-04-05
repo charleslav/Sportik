@@ -19,10 +19,12 @@ CACHE 10;
 #Creation des tables #1
 CREATE TABLE IF NOT EXISTS Category (catid integer AUTO_INCREMENT NOT NULL,
                        category_name varchar(30) NOT NULL,
-                       parent_category_id varchar(20),
-                       PRIMARY KEY (catid)); #CATEGORIE DUNE CATÉGORIE
+                       parent_category_id integer NOT NULL,
+                        is_active BOOLEAN DEFAULT TRUE,
+                       PRIMARY KEY (catid), #CATEGORIE DUNE CATÉGORIE
+                       FOREIGN KEY (parent_category_id) REFERENCES Category(parent_category_id));
 ALTER TABLE Category AUTO_INCREMENT=1000000;
-INSERT INTO Category(catid,category_name,parent_category_id) VALUES ();
+INSERT INTO Category(catid,category_name,parent_category_id, is_active) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT NOT NULL,
                        name varchar(35) NOT NULL,
