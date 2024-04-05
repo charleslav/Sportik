@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS Customer_review (crid integer AUTO_INCREMENT NOT NULL
                               customer_id integer,
                               productModel_id integer,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                              item_rating_review varchar(1000) UNIQUE,
+                              item_rating_review varchar(1000),
                               PRIMARY KEY(crid),
                               FOREIGN KEY (customer_id) REFERENCES Customer(cid),
                               FOREIGN KEY (productModel_id) REFERENCES Product_Model(pmid));#STARS ?
