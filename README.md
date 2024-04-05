@@ -16,7 +16,6 @@ le site web devra répondre :
 
 •	Assurer une bonne expérience à l’utilisateur (aucun crash, modèle simple et intuitif).
 
-(À Développer)
 
 
 Autre aspect:
