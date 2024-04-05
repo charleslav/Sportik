@@ -26,6 +26,7 @@ CREATE TABLE Product(pid integer AUTO_INCREMENT NOT NULL,
                      PRIMARY KEY (pid),
                      FOREIGN KEY (provider_id) REFERENCES Provider(provider_id),
                      constraint CT_Rating_Range CHECK (product_rating BETWEEN 0 AND 5));
+ALTER TABLE Product AUTO_INCREMENT = 1000000;                                           #choix de design
 
 CREATE TABLE Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            product_name varchar(200) UNIQUE NOT NULL,
@@ -34,11 +35,14 @@ CREATE TABLE Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            upc varchar(13) UNIQUE NOT NULL,  #doute x2
                            sku varchar(14) UNIQUE NOT NULL,  #doute x2
                            PRIMARY KEY (pmid));
+ALTER TABLE Product_Model AUTO_INCREMENT = 2000000;                                   #choix de design
+
 
 CREATE TABLE Category (catid integer AUTO_INCREMENT NOT NULL,
                        category_name varchar(30) NOT NULL,
                        parent_category_id varchar(20),
                        PRIMARY KEY (catid)); #CATEGORIE DUNE CATÉGORIE
+ALTER TABLE Category AUTO_INCREMENT = 3000000;                                          #choix de design
 
 CREATE TABLE Customer (cid integer AUTO_INCREMENT NOT NULL,
                        name varchar(35) NOT NULL,
@@ -49,6 +53,7 @@ CREATE TABLE Customer (cid integer AUTO_INCREMENT NOT NULL,
                        creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        card_total_price integer DEFAULT 0,
                        PRIMARY KEY(cid));
+ALTER TABLE Product_Model AUTO_INCREMENT = 4000000;
 
 CREATE TABLE Customer_review (crid integer AUTO_INCREMENT NOT NULL,
                               customer_id integer,
@@ -58,6 +63,7 @@ CREATE TABLE Customer_review (crid integer AUTO_INCREMENT NOT NULL,
                               PRIMARY KEY(crid),
                               FOREIGN KEY (customer_id) REFERENCES Customer(cid),
                               FOREIGN KEY (productModel_id) REFERENCES Product_Model(pmid));#STARS ?
+ALTER TABLE Customer_review AUTO_INCREMENT = 5000000;
 
 #Changer order et regarder le datatype de is_featured pour le bool
 CREATE TABLE Provider (provider_id integer AUTO_INCREMENT NOT NULL,
@@ -66,12 +72,14 @@ CREATE TABLE Provider (provider_id integer AUTO_INCREMENT NOT NULL,
                        provider_order_number integer NOT NULL,
                        featured_image varchar(250) NOT NULL,
                        PRIMARY KEY (provider_id));
+ALTER TABLE Provider AUTO_INCREMENT = 6000000;
 
 CREATE TABLE Product_Packaging (ppid integer AUTO_INCREMENT NOT NULL,
                                dimension varchar(25) NOT NULL DEFAULT 5,
                                weight decimal NOT NULL DEFAULT 1,
                                packaging_material varchar(30) NOT NULL,
                                PRIMARY KEY (ppid));
+ALTER TABLE Product_Packaging AUTO_INCREMENT = 8000000;
 
 CREATE TABLE Discount (did integer AUTO_INCREMENT NOT NULL,
                       discount_rate decimal DEFAULT NULL,
@@ -79,11 +87,13 @@ CREATE TABLE Discount (did integer AUTO_INCREMENT NOT NULL,
                       start_date date,
                       end_date date,
                       PRIMARY KEY(did));
+ALTER TABLE Discount AUTO_INCREMENT = 7000000;
 
 CREATE TABLE Product_Model_Image (product_model_image_id INTEGER AUTO_INCREMENT NOT NULL,
                                  thumbnail varchar(250) NOT NULL,
                                  image varchar(250) NOT NULL,
                                  PRIMARY KEY(product_model_image_id));
+ALTER TABLE Product_Model_Image AUTO_INCREMENT = 9000000;
 
 CREATE TABLE Orders (order_id integer AUTO_INCREMENT NOT NULL,
                      payment_method varchar(20) NOT NULL,
@@ -91,6 +101,7 @@ CREATE TABLE Orders (order_id integer AUTO_INCREMENT NOT NULL,
                      order_date DATE NOT NULL,
                      order_status ENUM ('Succes', 'In Progress', 'Canceled') NOT NULL,
                      PRIMARY KEY (order_id));
+ALTER TABLE Orders AUTO_INCREMENT = 10000000;
 
 CREATE TABLE Cart  (pmid integer NOT NULL,
                     cid integer NOT NULL,
@@ -100,8 +111,10 @@ CREATE TABLE Cart  (pmid integer NOT NULL,
                     FOREIGN KEY (pmid) REFERENCES Product_Model(pmid),
                     FOREIGN KEY (cid) REFERENCES Customer(cid)
                     );
+ALTER TABLE Product_Model AUTO_INCREMENT = 11000000;
 
 CREATE TABLE Product_isClassifiedAs_Category (pid integer NOT NULL,
                                               catid integer NOT NULL,
                                               FOREIGN KEY (pid) REFERENCES Product(pid),
                                               FOREIGN KEY (catid) REFERENCES Category(catid));
+ALTER TABLE Product_isClassifiedAs_Category AUTO_INCREMENT = 12000000;
