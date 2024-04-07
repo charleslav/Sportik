@@ -2,6 +2,10 @@
 CREATE DATABASE Sportik;
 USE Sportik;
 SELECT * FROM Product;
+SELECT * FROM Customer;
+SELECT * FROM Product_Model;
+SELECT * FROM ProductModel_ISA_Product;
+DROP DATABASE Sportik;
 /*
 Pour les auto increment (W3 Schools)
 
@@ -51,12 +55,12 @@ ALTER TABLE  Provider AUTO_INCREMENT=3000000;
 #INSERT INTO Provider(provider_id, provider_name, is_featured, provider_order_number, featured_image) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Product_Packaging (ppid integer AUTO_INCREMENT NOT NULL,
-                               dimension ENUM('kg', 'lb') NOT NULL DEFAULT 'kg',
+                               dimension varchar(25) NOT NULL,
                                weight decimal NOT NULL DEFAULT 1,
                                packaging_material varchar(30) NOT NULL,
                                PRIMARY KEY (ppid));
 ALTER TABLE Product_Packaging AUTO_INCREMENT=3000000;
-#INSERT INTO Product_Packaging(ppid, dimension, weight, packaging_material) VALUES ();
+#INSERT INTO Product_Packaging(dimension, weight, packaging_material) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Discount (did integer AUTO_INCREMENT NOT NULL,
                       discount_rate decimal DEFAULT NULL,
@@ -94,16 +98,16 @@ CREATE TABLE IF NOT EXISTS Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
                            price decimal DEFAULT 0 NOT NULL,
                            quantity integer NOT NULL,
                            product_id integer NOT NULL,
-                           discount_id integer,
-                           packaging_id integer,
-                           upc varchar(13) UNIQUE NOT NULL,  #doute x2
-                           sku varchar(14) UNIQUE NOT NULL,  #doute x2
+                           discount_id integer DEFAULT NULL,
+                           packaging_id integer NOT NULL,
+                           #upc varchar(13) UNIQUE NOT NULL,  #doute x2
+                           #sku varchar(14) UNIQUE NOT NULL,  #doute x2
                            PRIMARY KEY (pmid),
                            FOREIGN KEY (product_id) REFERENCES Product(pid),
                            FOREIGN KEY (discount_id) REFERENCES Discount(did),
                            FOREIGN KEY (packaging_id) REFERENCES Product_Packaging(ppid));
 ALTER TABLE Product_Model AUTO_INCREMENT=8000000;
-#INSERT INTO Product_Model(pmid, product_name, price, quantity, product_id, discount_id, packaging_id, upc, sku) VALUES ();
+#INSERT INTO Product_Model(product_name, price, quantity, product_id, packaging_id) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Customer_review (crid integer AUTO_INCREMENT NOT NULL,
                               customer_id integer,
@@ -143,7 +147,6 @@ CREATE TABLE IF NOT EXISTS Product_isClassifiedAs_Category (pid integer NOT NULL
                                               catid integer NOT NULL,
                                               FOREIGN KEY (pid) REFERENCES Product(pid),
                                               FOREIGN KEY (catid) REFERENCES Category(catid));
-ALTER TABLE Product_isClassifiedAs_Category AUTO_INCREMENT=11000000;
 #INSERT INTO Product_isClassifiedAs_Category(pid, catid) VALUES ();
 
 /*
@@ -154,5 +157,4 @@ CREATE TABLE IF NOT EXISTS ProductModel_ISA_Product (product_model_id integer NO
                                        product_id integer NOT NULL,
                                        FOREIGN KEY (product_model_id) REFERENCES Product_Model(pmid),
                                        FOREIGN KEY (product_id) REFERENCES Product(pid));
-ALTER TABLE ProductModel_ISA_Product AUTO_INCREMENT=12000000;
 #INSERT INTO ProductModel_ISA_Product(product_model_id, product_id) VALUES ();
