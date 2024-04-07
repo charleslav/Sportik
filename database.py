@@ -1,5 +1,6 @@
 import os
 import random
+from datetime import datetime
 
 import cursor
 from faker import Faker
@@ -409,6 +410,83 @@ def generate_product_packaging_data(cursor):
         VALUES("{dimension}", {weight}, "{packaging_material}");"""
         cursor.execute(request)
 
+def generate_provider_data(cursor, fake):
+    for i in range(5):
+        provider_name = fake.company()
+        is_featured = random.randint(0, 1)
+        featured_image = "Sportik/images/" + provider_name + ".png"
+        request = f"""INSERT INTO Provider (provider_name, is_featured, featured_image)
+        VALUES("{provider_name}", {is_featured}, "{featured_image}");"""
+        cursor.execute(request)
+
+def generate_categories_data(cursor):
+    categories = [
+        {
+            "category_name" : "Shoes",
+            "parent_category_id" : "NULL",
+            "is_active" : 1
+        },
+        {
+            "category_name": "Sport",
+            "parent_category_id": 1000000,
+            "is_active": 1
+        },
+        {
+            "category_name": "Classic",
+            "parent_category_id": 1000000,
+            "is_active": 1
+        },
+        {
+            "category_name": "Colorways",
+            "parent_category_id": 1000000,
+            "is_active": 1
+        },
+        {
+            "category_name": "Basketball",
+            "parent_category_id": 1000001,
+            "is_active": 1
+        },
+        {
+            "category_name": "Running",
+            "parent_category_id": 1000001,
+            "is_active": 1
+        },
+        {
+            "category_name": "Casual",
+            "parent_category_id": 1000002,
+            "is_active": 1
+        }
+    ]
+
+    for category in categories:
+        request = f"""INSERT INTO Category (category_name,parent_category_id, is_active)
+        VALUES('{category["category_name"]}', {category["parent_category_id"]}, '{category["is_active"]}');"""
+        cursor.execute(request)
+
+def generate_discount_data(cursor, fake):
+    for i in range(5):
+        discount_rate = random.randint(0, 100)
+        dateIsValid = False
+        while not dateIsValid:
+            start_date = fake.date_this_year(before_today=True, after_today=True)
+            end_date = fake.date_this_year(before_today=False, after_today=True)
+            if start_date <= end_date:
+                dateIsValid = True
+        is_active = 0
+        if(start_date <= datetime.now().date()):
+            is_active = 1
+        request = f"""INSERT INTO Discount (discount_rate, start_date, end_date, is_active)
+        VALUES({discount_rate}, "{start_date}", "{end_date}", {is_active});"""
+        cursor.execute(request)
+
+def generate_provider_data(cursor, fake):
+    for i in range(5):
+        provider_name = fake.company()
+        is_featured = random.randint(0, 1)
+        featured_image = "Sportik/images/" + provider_name + ".png"
+        request = f"""INSERT INTO Provider (provider_name, is_featured, featured_image)
+        VALUES("{provider_name}", {is_featured}, "{featured_image}");"""
+        cursor.execute(request)
 
 if __name__ == '__main__':
     db = Database()  # Create an instance of the Database class
@@ -419,5 +497,7 @@ if __name__ == '__main__':
     generate_product_data(cursor)
     generate_product_packaging_data(cursor)
     generate_product_model_data(cursor)
-
+    generate_provider_data(cursor, fake)
+    generate_categories_data(cursor)
+    generate_discount_data(cursor, fake)
     cursor.execute(create_table)

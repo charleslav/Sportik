@@ -4,7 +4,8 @@ USE Sportik;
 SELECT * FROM Product;
 SELECT * FROM Customer;
 SELECT * FROM Product_Model;
-SELECT * FROM ProductModel_ISA_Product;
+SELECT * FROM Category;
+SELECT * FROM Discount;
 DROP DATABASE Sportik;
 /*
 Pour les auto increment (W3 Schools)
@@ -24,8 +25,8 @@ CACHE 10;
 #Creation des tables #1
 CREATE TABLE IF NOT EXISTS Category (catid integer AUTO_INCREMENT NOT NULL,
                        category_name varchar(30) NOT NULL,
-                       parent_category_id integer NOT NULL,
-                        is_active BOOLEAN DEFAULT TRUE,
+                       parent_category_id integer,
+                        is_active bool DEFAULT 1,
                        PRIMARY KEY (catid), #CATEGORIE DUNE CATÉGORIE
                        FOREIGN KEY (parent_category_id) REFERENCES Category(catid));
 ALTER TABLE Category AUTO_INCREMENT=1000000;
@@ -48,7 +49,6 @@ ALTER TABLE Customer AUTO_INCREMENT=2000000;
 CREATE TABLE IF NOT EXISTS Provider (provider_id integer AUTO_INCREMENT NOT NULL,
                        provider_name varchar(100) NOT NULL,
                        is_featured bool NOT NULL,
-                       provider_order_number integer NOT NULL,
                        featured_image varchar(250) NOT NULL,
                        PRIMARY KEY (provider_id));
 ALTER TABLE  Provider AUTO_INCREMENT=3000000;
@@ -64,13 +64,12 @@ ALTER TABLE Product_Packaging AUTO_INCREMENT=3000000;
 
 CREATE TABLE IF NOT EXISTS Discount (did integer AUTO_INCREMENT NOT NULL,
                       discount_rate decimal DEFAULT NULL,
-                      discount_amount decimal DEFAULT NULL,
-                      start_date date,
-                      end_date date,
-                      is_active BOOLEAN DEFAULT FALSE,                               /* va etre activer comme true lorsque start_date va etre hit, false lorsque end_date va hit */
+                      start_date date NOT NULL,
+                      end_date date NOT NULL,
+                      is_active BOOLEAN DEFAULT FALSE NOT NULL,                               /* va etre activer comme true lorsque start_date va etre hit, false lorsque end_date va hit */
                       PRIMARY KEY(did));
 ALTER TABLE Discount AUTO_INCREMENT=4000000;
-#INSERT INTO Discount(did, discount_rate, discount_amount, start_date, end_date) VALUES ();
+#INSERT INTO Discount(did, discount_rate, discount_amount, start_date, end_date, is_active) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Orders (order_id integer AUTO_INCREMENT NOT NULL,
                      payment_method varchar(20) NOT NULL,
