@@ -1,12 +1,7 @@
 #Creation de la Database
 CREATE DATABASE Sportik;
 USE Sportik;
-SELECT * FROM Product;
-SELECT * FROM Customer;
-SELECT * FROM Product_Model;
-SELECT * FROM Category;
-SELECT * FROM Discount;
-DROP DATABASE Sportik;
+
 /*
 Pour les auto increment (W3 Schools)
 
@@ -148,12 +143,108 @@ CREATE TABLE IF NOT EXISTS Product_isClassifiedAs_Category (pid integer NOT NULL
                                               FOREIGN KEY (catid) REFERENCES Category(catid));
 #INSERT INTO Product_isClassifiedAs_Category(pid, catid) VALUES ();
 
-/*
- Cette table permet de regrouper le Product Model et son type de Produit dans une table pour savoir quel variation de produit est associe
- a un produit.
- */
+
+
 CREATE TABLE IF NOT EXISTS ProductModel_ISA_Product (product_model_id integer NOT NULL,
                                        product_id integer NOT NULL,
                                        FOREIGN KEY (product_model_id) REFERENCES Product_Model(pmid),
                                        FOREIGN KEY (product_id) REFERENCES Product(pid));
 #INSERT INTO ProductModel_ISA_Product(product_model_id, product_id) VALUES ();
+show tables ;
+show databases;
+show tables;
+show databases;
+show tables ;
+show databases;
+use Sportik;
+show tables;
+
+
+
+# Cette partie concerne la correction des tables by adnane lardi
+
+
+
+
+DROP TABLE Cart ;
+CREATE TABLE IF NOT EXISTS Cart
+(
+    id_cart integer,
+    total_amount DECIMAL(10,2) ,
+    PRIMARY KEY (id_cart)
+);
+
+
+
+Create table contains (id_contains integer,
+                       cost DECIMAL (10,2),
+                       id_cart int,
+                       pmid integer,
+                      quantity integer,
+                    cid integer,
+                    PRIMARY KEY (id_contains),
+                       FOREIGN KEY (id_cart) REFERENCES Cart(id_cart),
+                     FOREIGN KEY (pmid) REFERENCES Product_Model(pmid),
+                      FOREIGN KEY (cid) REFERENCES Customer(cid));
+
+
+
+
+
+
+
+drop table Orders;
+
+CREATE TABLE IF NOT EXISTS Orders (order_id integer AUTO_INCREMENT NOT NULL,
+                     payment_method varchar(20) NOT NULL,
+                    cid integer NOT NULL ,
+                    id_cart integer NOT NULL,
+                     payment_status ENUM ('Succes', 'In Progress', 'Denied') NOT NULL,
+                     order_date DATE NOT NULL,
+                     order_status ENUM ('Succes', 'In Progress', 'Canceled') NOT NULL,
+                     PRIMARY KEY (order_id),
+                    FOREIGN KEY (cid) REFERENCES Customer(cid) ON DELETE NO ACTION,
+                     FOREIGN KEY (id_cart) REFERENCES Cart(id_cart) ON DELETE NO ACTION
+);
+ALTER TABLE Orders AUTO_INCREMENT=6000000;
+
+
+DELIMITER //
+
+CREATE PROCEDURE valider_login(
+    IN p_username VARCHAR(50),
+    IN p_mot_de_passe VARCHAR(50)
+)
+BEGIN
+    DECLARE customer_id INT;
+
+    SELECT cid INTO customer_id
+    FROM Customer
+    WHERE username = p_username AND password = p_mot_de_passe;
+
+    SELECT customer_id;
+END //
+
+DELIMITER ;
+
+-- Création des triggers
+DELIMITER //
+
+CREATE TRIGGER after_insert_contains
+AFTER INSERT ON contains
+FOR EACH ROW
+BEGIN
+    DECLARE discount_rate DECIMAL(10, 2);
+
+    SELECT d.discount_rate INTO discount_rate
+    FROM Product_Model pm
+    LEFT JOIN Discount d ON pm.discount_id = d.did
+    WHERE pm.pmid = NEW.pmid AND d.is_active = 1 AND NOW() BETWEEN d.start_date AND d.end_date;
+
+    IF discount_rate IS NOT NULL THEN
+        SET NEW.cost = NEW.cost - (NEW.cost * discount_rate / 100);
+    END IF;
+END //
+
+DELIMITER ;
+

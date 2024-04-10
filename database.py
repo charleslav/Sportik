@@ -2,7 +2,6 @@ import os
 import random
 from datetime import datetime
 
-import cursor
 from faker import Faker
 
 import pymysql
@@ -21,7 +20,7 @@ class Database:
         self.host = os.environ.get("HOST")
         self.port = os.environ.get("PORT")
         self.database = os.environ.get("DATABASE")
-        self.user = os.environ.get("USER")
+        self.user = os.environ.get("DB_USER")
         self.password = os.environ.get("PASSWORD")
 
         self._open_sql_connection()
@@ -487,6 +486,118 @@ def generate_provider_data(cursor, fake):
         request = f"""INSERT INTO Provider (provider_name, is_featured, featured_image)
         VALUES("{provider_name}", {is_featured}, "{featured_image}");"""
         cursor.execute(request)
+
+
+def get_price_by_id_produit(id_produit):
+    query = "SELECT price FROM Product_Model WHERE pmid = %s"
+    cursor.execute(query, (id_produit,))
+    result = cursor.fetchone()
+
+    if result:
+        return result[0]
+    else:
+        return None
+
+def total_cost_cart(id_cart):
+    query = "SELECT SUM(cost) FROM contains WHERE id_cart = %s"
+    cursor.execute(query, (id_cart,))
+    result = cursor.fetchone()
+
+    if result:
+        return result[0]
+    else:
+        return 0
+
+def create_cart(id_client, dictionnaire):
+    try:
+        # Générer un nouveau cart_id
+        query = "INSERT INTO Cart (id_cart, total_amount) VALUES (NULL, NULL)"
+        cursor.execute(query)
+        id_cart = cursor.lastrowid
+
+        for i in dictionnaire:
+            quantity = dictionnaire[i]
+            price = get_price_by_id_produit(i)
+
+            if price is not None:
+                cost = price * quantity
+
+                # Insérer les valeurs dans la table Contains
+                query = "INSERT INTO contains (id_contains, cost, id_cart, pmid, quantity, cid) VALUES (NULL, %s, %s, %s, %s, %s)"
+                values = (cost, id_cart, i, quantity, id_client)
+                cursor.execute(query, values)
+
+        # Calculer le coût total du panier
+        total_amount = total_cost_cart(id_cart)
+
+        # Mettre à jour le coût total dans la table Cart
+        query = "UPDATE Cart SET total_amount = %s WHERE id_cart = %s"
+        values = (total_amount, id_cart)
+        cursor.execute(query, values)
+
+        db.connection.commit()
+        return id_cart
+
+    except Exception as e:
+        db.connection.rollback()
+        raise e
+
+def valider_login(username, mot_de_passe):
+    try:
+        # Appeler la routine MySQL
+        query = "CALL valider_login(%s, %s)"
+        values = (username, mot_de_passe)
+        cursor.execute(query, values)
+
+        # Récupérer le résultat de la routine
+        result = cursor.fetchone()
+
+        if result:
+            return result[0]  # Renvoie l'ID du client s'il existe, None sinon
+        else:
+            return None
+
+    except Exception as e:
+        raise e
+
+def get_user(cid):
+    try:
+        # Requête pour récupérer les attributs de l'utilisateur
+        query = """
+            SELECT name, username, password, age, email, customer_adress, creation_date, card_total_price
+            FROM Customer
+            WHERE cid = %s
+        """
+        values = (cid,)
+        cursor.execute(query, values)
+
+        # Récupérer le résultat de la requête
+        result = cursor.fetchone()
+
+        if result:
+            # Extraire les attributs de l'utilisateur
+            name, username, password, age, email, customer_adress, creation_date, card_total_price = result
+
+            # Retourner les attributs de l'utilisateur sous forme de dictionnaire
+            user = {
+                "name": name,
+                "username": username,
+                "password": password,
+                "age": age,
+                "email": email,
+                "customer_adress": customer_adress,
+                "creation_date": creation_date,
+                "card_total_price": card_total_price
+            }
+
+            return user
+        else:
+            return None
+
+    except Exception as e:
+        raise e
+
+
 
 if __name__ == '__main__':
     db = Database()  # Create an instance of the Database class
