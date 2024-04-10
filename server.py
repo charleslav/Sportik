@@ -17,7 +17,7 @@ cors = CORS(app)
 def index():
     return jsonify({"message": "Hello World!"})
 
-@app.route("/auth", methods=["POST"])
+@app.route("/login", methods=["POST"])
 @cross_origin()
 def getUser():
     data = request.json
@@ -31,5 +31,19 @@ def getUser():
     }
     return jsonify(response)
 
+@app.route("/register", methods=["POST"])
+@cross_origin()
+def registerUser():
+    return null
+
+@app.route("/products", methods=["GET"])
+@cross_origin()
+def getAllProducts():
+    data = myDatabase.get_products()
+    response = {
+        "products" : data,
+        "status" : 200
+    }
+    return jsonify(response)
 if __name__ == '__main__':
     app.run()

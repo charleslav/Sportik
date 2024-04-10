@@ -11,7 +11,10 @@ from dotenv import load_dotenv
 
 # from sql_utils import run_sql_file
 
-
+class dotdict(dict):
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 class Database:
     def __init__(self):
         """
@@ -40,11 +43,28 @@ class Database:
 
         self.cursor = self.connection.cursor()
 
+    def get_results(self):
+        desc = [d[0] for d in self.cursor.description]
+        results = [dotdict(dict(zip(desc, res))) for res in self.cursor.fetchall()]
+        return results
+
     def get_user(self, username, password):
         request = f"""SELECT cid FROM sportik.customer WHERE username = '{username}' AND password = '{password}'"""
         self.cursor.execute(request)
         response = self.cursor.fetchone()
         return response
+
+    def insert_user(self, username, password):
+        request = f"""INSERT INTO sportik.customer(username, password) VALUES ('{username}','{password}'"""
+        self.cursor.execute(request)
+
+    def get_products(self):
+        request = f"""SELECT * from product"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
+
+
 
 
 def insert_todo(text):
