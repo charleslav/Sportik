@@ -1,13 +1,17 @@
+# noinspection SqlCurrentSchemaInspectionForFile
+
 #Creation de la Database
+IF EXISTS DROP DATABASE Sportik;
 CREATE DATABASE Sportik;
 USE Sportik;
+/*
 SELECT * FROM Product;
 SELECT * FROM Customer;
 SELECT * FROM Product_Model;
 SELECT * FROM Category;
 SELECT * FROM Discount;
 DROP DATABASE Sportik;
-/*
+
 Pour les auto increment (W3 Schools)
 
 In Oracle the code is a little bit more tricky.

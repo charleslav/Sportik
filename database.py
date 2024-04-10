@@ -40,11 +40,18 @@ class Database:
 
         self.cursor = self.connection.cursor()
 
+    def get_user(self, username, password):
+        request = f"""SELECT cid FROM sportik.customer WHERE username = '{username}' AND password = '{password}'"""
+        self.cursor.execute(request)
+        response = self.cursor.fetchone()
+        return response
+
 
 def insert_todo(text):
     request = f"""INSERT INTO todo (text) VALUE ("{text}")"""
 
     cursor.execute(request)
+
 
 
 def generate_customer_data(cursor, fake):
