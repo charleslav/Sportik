@@ -76,14 +76,15 @@ ALTER TABLE Product AUTO_INCREMENT=7000000;
 #INSERT INTO Product(pid, product_name, product_rating, product_image, description, provider_id) VALUES ();
 
 CREATE TABLE IF NOT EXISTS Product_Model (pmid integer AUTO_INCREMENT NOT NULL,
-                           product_name varchar(200) UNIQUE NOT NULL,
+                           product_model_name varchar(200) UNIQUE NOT NULL,
                            price decimal DEFAULT 0 NOT NULL,
                            quantity integer NOT NULL,
                            product_id integer NOT NULL,
                            discount_id integer DEFAULT NULL,
                            packaging_id integer NOT NULL,
-                           #upc varchar(13) UNIQUE NOT NULL,  #doute x2
-                           #sku varchar(14) UNIQUE NOT NULL,  #doute x2
+                           product_name varchar(100) DEFAULT NULL,
+                           description varchar(2000) DEFAULT NULL,
+                           product_image varchar(250) DEFAULT NULL,
                            PRIMARY KEY (pmid),
                            FOREIGN KEY (product_id) REFERENCES Product(pid),
                            FOREIGN KEY (discount_id) REFERENCES Discount(did),
