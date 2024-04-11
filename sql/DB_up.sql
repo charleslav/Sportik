@@ -4,27 +4,6 @@
 IF EXISTS DROP DATABASE Sportik;
 CREATE DATABASE Sportik;
 USE Sportik;
-/*
-SELECT * FROM Product;
-SELECT * FROM Customer;
-SELECT * FROM Product_Model;
-SELECT * FROM Category;
-SELECT * FROM Discount;
-DROP DATABASE Sportik;
-
-Pour les auto increment (W3 Schools)
-
-In Oracle the code is a little bit more tricky.
-
-You will have to create an auto-increment field with the sequence object (this object generates a number sequence).
-
-Use the following CREATE SEQUENCE syntax:
-CREATE SEQUENCE seq_person
-MINVALUE 1
-START WITH 1
-INCREMENT BY 1
-CACHE 10;
-*/
 
 #Creation des tables #1
 CREATE TABLE IF NOT EXISTS Category (catid integer AUTO_INCREMENT NOT NULL,
