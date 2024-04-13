@@ -1,17 +1,16 @@
 <script setup>
-const props = defineProps(["keys","infos"])
+const props = defineProps(["pid","infos"])
 
 
 </script>
 
 <template>
-  <router-link to="/item" class="product-card">
+  <router-link :to="'/item/' + props.pid" class="product-card">
     <img :src="props.infos.product_image" :alt="props.infos.product_name">
     <div class="product-details">
       <h2>{{ props.infos.product_name }}</h2>
       <p>{{ props.infos.description }}</p>
       <p>Price: ${{ props.infos.price }}</p>
-      <button @click="$emit('addproducts', props.infos)">Add to Cart</button>
     </div>
   </router-link>
 </template>

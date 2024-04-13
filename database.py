@@ -7,6 +7,7 @@ from faker import Faker
 
 import pymysql
 from dotenv import load_dotenv
+from pymysql import IntegrityError
 
 
 # from sql_utils import run_sql_file
@@ -54,8 +55,9 @@ class Database:
         response = self.cursor.fetchone()
         return response
 
-    def insert_user(self, username, password):
-        request = f"""INSERT INTO sportik.customer(username, password) VALUES ('{username}','{password}'"""
+    def insert_customer(self, name, username, password, age, email, customer_adress):
+        request = f"""INSERT INTO sportik.customer (name, username, password, age, email, customer_adress) VALUES ('{name}','{username}','{password}',{age},'{email}','{customer_adress}')"""
+
         self.cursor.execute(request)
 
     def get_products(self):
@@ -64,8 +66,11 @@ class Database:
         response = self.get_results()
         return response
 
-
-
+    def get_products_by_id(self, id):
+        request = f"""SELECT * from product WHERE pid = '{id}'"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
 
 def insert_todo(text):
     request = f"""INSERT INTO todo (text) VALUE ("{text}")"""

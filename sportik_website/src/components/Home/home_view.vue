@@ -26,10 +26,6 @@ async function fetchProducts(){
   })
 }
 
-function addToCart(product) {
-   //Add logic to add product to cart
-  console.log("Product added to cart:", product);
-}
 </script>
 
 
@@ -42,7 +38,7 @@ function addToCart(product) {
       <card v-for="product in products"
             :key="product.pid"
             :infos="product"
-            @addproducts="addToCart"></card>
+            :pid="product.pid"></card>
     </div>
 
 

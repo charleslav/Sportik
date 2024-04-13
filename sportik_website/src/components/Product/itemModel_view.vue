@@ -1,7 +1,13 @@
 <template>
-  <div class="item-view">
+  <div v-if="item" class="item-view">
     <div class="item-left">
       <img :alt="item.name" :src="selectedColorImage">
+
+    </div>
+    <div class="item-right">
+      <h2>{{ item.product_name }}</h2>
+      <p>{{ item.description }}</p>
+      <p class="price">Price: ${{ item.price }}</p>
       <!-- Color variations -->
       <div class="variation-options">
         <label for="color">Color:</label>
@@ -18,14 +24,12 @@
         </div>
       </div>
     </div>
-    <div class="item-right">
-      <h2>{{ item.name }}</h2>
-      <p>{{ item.description }}</p>
-      <p class="price">Price: ${{ item.price }}</p>
-    </div>
+  </div>
+  <div v-else>
+    Loading..
   </div>
 
-  <!-- Reviews -->
+  <!-- Reviews
   <div class="reviews-container">
     <div class="reviews">
       <h3>Reviews</h3>
@@ -39,7 +43,6 @@
       <p v-else>No reviews yet.</p>
     </div>
 
-    <!-- Leave a Review -->
     <div class="leave-review">
       <h3>Leave a Review</h3>
       <form @submit.prevent="submitReview">
@@ -60,13 +63,34 @@
         <button type="submit">Submit Review</button>
       </form>
     </div>
-  </div>
+  </div>-->
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
 
-const item = ref({
+
+const props = defineProps(["itemId"])
+const item = ref({})
+fetch(`http://127.0.0.1:5000/product/${props.itemId}`, {
+  method:"get",
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+
+}).then( (response) => {
+  return response.json()
+}).then( (data) => {
+  if (data.status === 200){
+    item.value = data.productData;
+    console.log(data.productData)
+  }
+})
+
+
+
+/*const item = ref({
   name: 'Example Item',
   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   price: 19.99,
@@ -82,7 +106,7 @@ const item = ref({
     { text: 'Great item!', rating: 5, user: 'John Doe' },
     { text: 'Could be better', rating: 3, user: 'Jane Smith' }
   ]
-})
+})*/
 const selectedColor = ref(null)
 const selectedSize = ref(null)
 
@@ -94,13 +118,13 @@ const selectedColorImage = computed(() => {
   return item.value.image
 })
 
-const newReview = ref({
+/*const newReview = ref({
   text: '',
   rating: 5,
   user: ''
 })
-
-const submitReview = () => {
+*/
+/*const submitReview = () => {
 
   if (newReview.value.text) {
     item.value.reviews.push({
@@ -116,7 +140,7 @@ const submitReview = () => {
 
     alert('Please fill out all fields.')
   }
-}
+}*/
 </script>
 
 <style scoped>
