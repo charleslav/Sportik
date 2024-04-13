@@ -2,7 +2,7 @@
   <div class="my-cart">
     <h2>My Cart</h2>
     <div v-if="cartItems.length === 0">
-      <p>Your cart is empty.</p>
+      <p>Your cart is empty.</p>n
     </div>
     <div v-else>
       <ul>

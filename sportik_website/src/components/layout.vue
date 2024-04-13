@@ -6,9 +6,8 @@
     <router-link to="/register" class="register-icon"><i class="fas fa-user-plus"></i></router-link>
     <router-link to="/login" class="sign-in-icon"><i class="fas fa-sign-in-alt"></i></router-link>
     <router-link to="/cart" class="cart-icon"><i class="fas fa-shopping-cart"></i></router-link>
-
-
   </div>
+  <router-view></router-view>
 </template>
 
 <script>

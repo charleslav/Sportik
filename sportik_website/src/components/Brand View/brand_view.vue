@@ -1,15 +1,16 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import card from "./category_card.vue"
+import card from "./brand_card.vue"
 
-let products = ref([]);
+let brands = ref([]);
 
 onMounted(async () => {
-  await fetchProducts();
+  console.log("i am here")
+  await fetchBrands();
 })
 
-async function fetchProducts(){
-  fetch("http://127.0.0.1:5000/products", {
+async function fetchBrands(){
+  fetch("http://127.0.0.1:5000/brands", {
     method:"get",
     headers: {
       'Accept': 'application/json',
@@ -20,8 +21,8 @@ async function fetchProducts(){
     return response.json()
   }).then( (data) => {
     if (data.status === 200){
-      products.value = data.products;
-      console.log(products.value)
+      brands.value = data.brands;
+      console.log(brands.value)
     }
   })
 }
@@ -35,10 +36,10 @@ async function fetchProducts(){
     <p>Check out our latest collection!</p>
     <div class="products">
       <!-- Example product cards -->
-      <card v-for="product in products"
-            :key="product.pid"
-            :infos="product"
-            :pid="product.pid"></card>
+      <card v-for="brand in brands"
+            :key="brand.bid"
+            :infos="brand"
+            :bid="brand.bid"></card>
     </div>
 
 

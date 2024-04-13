@@ -49,16 +49,25 @@ def registerUser():
     return jsonify(response)
 
 
-@app.route("/products", methods=["GET"])
+@app.route("/brands", methods=["GET"])
 @cross_origin()
 def getAllProducts():
     data = myDatabase.get_products()
     response = {
-        "products": data,
+        "brands": data,
         "status": 200
     }
     return jsonify(response)
 
+@app.route("/brands/<brand_id>", methods=["GET"])
+@cross_origin()
+def getBrandModelByBrand(brand_id):
+    data = myDatabase.get_brand_id(brand_id)
+    response = {
+        "brandModel": data,
+        "status": 200
+    }
+    return jsonify(response)
 
 @app.route("/product/<int:id>", methods=["GET"])
 @cross_origin()

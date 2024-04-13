@@ -61,7 +61,13 @@ class Database:
         self.cursor.execute(request)
 
     def get_products(self):
-        request = f"""SELECT * from product"""
+        request = f"""SELECT * from brand"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
+
+    def get_brand_id(self, brand_id):
+        request = f"""SELECT * FROM brand_model WHERE brand_id = '{brand_id}'"""
         self.cursor.execute(request)
         response = self.get_results()
         return response
