@@ -53,13 +53,13 @@ DELIMITER //
 CREATE TRIGGER CheckMultipleSameProductsInCart BEFORE INSERT ON Cart
 FOR EACH ROW
     BEGIN
-        DECLARE brandModelID INTEGER;
-        SET brandModelID = NEW.brand_model_id;
-        IF brandModelID IN (SELECT brand_model_id FROM Cart)
-            THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product is already in your Cart';
+        IF (SELECT COUNT(*) FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid) > 0
+        THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product is already in your Cart';
         END IF;
     END //
 DELIMITER ;
+
 
 #Création de trigger qui permet d'avoir un apercu du prix total d'un order
 #Ce Trigger sert plus de visualisation lors de l'ajout de nouveaux produits par un Customer
@@ -104,18 +104,20 @@ DELIMITER ;
 
 /* Test
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-UPDATE Cart SET quantity = 4 WHERE brand_model_id = 8000002;
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
+UPDATE Cart SET quantity = 1 WHERE brand_model_id = 8000002;
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000003, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000002, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000012, 1, 207, 30);
 DELETE FROM Cart WHERE brand_model_id = 8000002;
 SELECT * FROM cart;
 SELECT * FROM c_picked_items;
 SELECT * FROM checkout;
 SELECT * FROM orders;
-*/
+SELECT * FROM brand_model;
  #SELECT * FROM customer;
+*/
 
-
-#Ce trigger permet d'obtenir le prix total d'une commande et de finaliser ]e prix dans la table checkout
+#Ce trigger permet d'obtenir le prix total d'une commande et de finaliser le prix dans la table checkout
 DELIMITER //
 CREATE TRIGGER produceTotalCheckout AFTER INSERT ON C_Picked_Items
 FOR EACH ROW
@@ -128,13 +130,13 @@ FOR EACH ROW
 
         SET productsTotal = (SELECT SUM(order_total) FROM C_Picked_Items WHERE checkout_id = NEW.checkout_id);
         SET productsTotalDiscount = (SELECT SUM(order_total_discount) FROM C_Picked_Items WHERE checkout_id = NEW.checkout_id);
-        SET orderTotal = productsTotal * (SELECT quantity FROM c_picked_items WHERE checkout_id = NEW.checkout_id);
-        SET finalPrice = (orderTotal * (1 + (SELECT tax_rate FROM Checkout WHERE checkout_id = NEW.checkout_id))) - productsTotalDiscount;
+        #SET orderTotal = productsTotal * (SELECT quantity FROM c_picked_items WHERE checkout_id = NEW.checkout_id AND brand_model_id = NEW.brand_model_id);
+        SET finalPrice = (productsTotal * (1 + 0.15)) - productsTotalDiscount;
 
         SELECT checkout_id INTO p_checkout_id FROM Checkout WHERE customer_id =
                                                           (SELECT customer_id FROM Checkout WHERE checkout_id = NEW.checkout_id)
                                                            AND order_id IS NULL;
-        UPDATE Checkout SET  total_discount = productsTotalDiscount, order_total = orderTotal, total_price=finalPrice
+        UPDATE Checkout SET  total_discount = productsTotalDiscount, order_total = productsTotal, total_price=finalPrice
                              WHERE checkout_id = p_checkout_id;
     END //
 DELIMITER ;
@@ -147,9 +149,9 @@ FOR EACH ROW
         DECLARE orderTotal decimal(10,2);
         DECLARE orderTotalDiscount decimal(10,2);
 
-        SET qty = (SELECT quantity FROM Cart WHERE brand_model_id = NEW.brand_model_id);
-        SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id);
-        SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id);
+        SET qty = (SELECT quantity FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
+        SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
+        SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
 
         UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id;
         UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id;
@@ -164,12 +166,14 @@ FOR EACH ROW
         DECLARE orderTotal decimal(10,2);
         DECLARE orderTotalDiscount decimal(10,2);
 
-        SET qty = (SELECT quantity FROM Cart WHERE brand_model_id = NEW.brand_model_id);
-        SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id);
-        SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id);
+        SET qty = (SELECT quantity FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
+        SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
+        SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
 
         UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id;
         UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id;
     END //
 DELIMITER ;
+
+
 
