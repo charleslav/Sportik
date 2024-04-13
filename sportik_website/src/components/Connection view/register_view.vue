@@ -26,7 +26,7 @@
         <label for="email">Email:</label>
         <input type="email" id="email" v-model="email" required>
       </div>
-      <button type="submit">Register</button>
+      <button type="submit" @click="register">Register</button>
     </form>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>

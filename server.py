@@ -17,6 +17,7 @@ cors = CORS(app)
 def index():
     return jsonify({"message": "Hello World!"})
 
+
 @app.route("/login", methods=["POST"])
 @cross_origin()
 def getUser():
@@ -25,25 +26,59 @@ def getUser():
     if cid is None:
         return jsonify({"status": "400", "message": "Invalid username or password"})
     response = {
-        "status" : 200,
-        "cid" : cid,
-        "token" : uuid.uuid4()
+        "status": 200,
+        "cid": cid,
+        "token": uuid.uuid4()
     }
     return jsonify(response)
+
 
 @app.route("/register", methods=["POST"])
 @cross_origin()
 def registerUser():
-    return null
+    body = request.json
+    myDatabase.insert_customer(body["name"],
+                               body["username"], body["password"],
+                               body["age"], body["email"],
+                               body["address"])
 
-@app.route("/products", methods=["GET"])
+    response = {
+        "status": 200,
+        "token": uuid.uuid4()
+    }
+    return jsonify(response)
+
+
+@app.route("/brands", methods=["GET"])
 @cross_origin()
 def getAllProducts():
     data = myDatabase.get_products()
     response = {
-        "products" : data,
-        "status" : 200
+        "brands": data,
+        "status": 200
     }
     return jsonify(response)
+
+@app.route("/brands/<brand_id>", methods=["GET"])
+@cross_origin()
+def getBrandModelByBrand(brand_id):
+    data = myDatabase.get_brand_id(brand_id)
+    response = {
+        "brandModel": data,
+        "status": 200
+    }
+    return jsonify(response)
+
+@app.route("/product/<int:id>", methods=["GET"])
+@cross_origin()
+def getProductById(id):
+    data = myDatabase.get_products_by_id(id)
+    response = {
+        "productData": data[0],
+        "status": 200
+    }
+    return jsonify(response)
+
+
 if __name__ == '__main__':
     app.run()
