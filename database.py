@@ -95,70 +95,70 @@ def generate_customer_data(cursor, fake):
 def generate_product_data(cursor):
     products = [
         {
-            "product_name": "Jordan",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Jordan.png",
+            "brand_name": "Jordan",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Jordan.png",
             "description": "Air Jordan is a renowned line of basketball shoes and athletic clothing produced by Nike. It was created for former NBA player Michael Jordan and released to the public on April 1, 1985. The shoes were designed by Peter Moore, Tinker Hatfield, and Bruce Kilgore, and are known for their innovative design, performance, and cultural impact."
         },
         {
-            "product_name": "Adidas",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Adidas.png",
+            "brand_name": "Adidas",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Adidas.png",
             "description": "Adidas AG is a German athletic apparel and footwear corporation headquartered in Herzogenaurach, Bavaria, Germany. It is the largest sportswear manufacturer in Europe, and the second largest in the world, after Nike."
         },
         {
-            "product_name": "Under Armour",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Under_Armour.png",
+            "brand_name": "Under Armour",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Under_Armour.png",
             "description": "Under Armour, Inc. is an American sportswear company that manufactures footwear and apparel headquartered in Baltimore, Maryland, United States."
         },
         {
-            "product_name": "Puma",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Puma.png",
+            "brand_name": "Puma",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Puma.png",
             "description": "Puma SE is a German multinational corporation that designs and manufactures athletic and casual footwear, apparel, and accessories, headquartered in Herzogenaurach, Bavaria, Germany. Puma is the third largest sportswear manufacturer in the world."
         },
         {
-            "product_name": "New Balance",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/New_Balance.png",
+            "brand_name": "New Balance",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/New_Balance.png",
             "description": "New Balance is one of the worlds major sports footwear and apparel manufacturers. Based in Boston, Massachusetts, the multinational corporation was founded in 1906 as the New Balance Arch Support Company."
         },
         {
-            "product_name": "Reebook",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Reebook.png",
+            "brand_name": "Reebook",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Reebook.png",
             "description": "Reebok International Limited is an American footwear and clothing company founded in Bolton, England, and headquartered in Boston, Massachusetts."
         },
         {
-            "product_name": "Fila",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Fila.png",
+            "brand_name": "Fila",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Fila.png",
             "description": "Fila is an Italian-South Korean sporting goods company founded in 1911 in Biella, Italy, and now based in Seoul."
         },
         {
-            "product_name": "Vans",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Vans.png",
+            "brand_name": "Vans",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Vans.png",
             "description": "Vans is an American manufacturer of skateboarding shoes and related apparel, based in Santa Ana, California, owned by VF Corporation."
         },
         {
-            "product_name": "Asics",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Asics.png",
+            "brand_name": "Asics",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Asics.png",
             "description": "Asics is a Japanese multinational corporation which produces sports equipment designed for a wide range of sports."
         },
         {
-            "product_name": "Brooks",
-            "product_rating": random.randint(0, 5),
-            "product_image": "Sportik/images/Brooks.png",
+            "brand_name": "Brooks",
+            "brand_rating": random.randint(0, 5),
+            "brand_image": "Sportik/images/Brooks.png",
             "description": "Brooks is an American athletic footwear brand known for its innovative designs and high-performance running shoes. Founded in 1914, Brooks has a long history of providing runners with comfortable and durable footwear engineered to enhance performance and prevent injury. Whether youre a seasoned marathoner or a casual jogger, Brooks shoes are designed to provide optimal support, cushioning, and stability to help you achieve your running goals. With a commitment to quality and innovation, Brooks continues to be a trusted choice for runners of all levels around the world."
         }
     ]
 
     for product in products:
-        request = f"""INSERT INTO Product (product_name, product_rating, product_image, description)
-        VALUES('{product["product_name"]}', {product["product_rating"]}, '{product["product_image"]}', '{product["description"]}');"""
+        request = f"""INSERT INTO Brand (brand_name, brand_rating, brand_image, description)
+        VALUES('{product["brand_name"]}', {product["brand_rating"]}, '{product["brand_image"]}', '{product["description"]}');"""
         cursor.execute(request)
 
 
@@ -168,24 +168,27 @@ def generate_product_model_data(cursor):
             "name": "Jordan",
             "models": [
                 {
-                    "product_name": "Air Jordan 1",
+                    "brand_model_name": "Air Jordan 1",
                     "price": random.randint(150, 300),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000000,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Air Jordan 3",
+                    "brand_model_name": "Air Jordan 3",
                     "price": random.randint(150, 300),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000000,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Air Jordan 5",
+                    "brand_model_name": "Air Jordan 5",
                     "price": random.randint(150, 300),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000000,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -194,24 +197,27 @@ def generate_product_model_data(cursor):
             "name": "Adidas",
             "models": [
                 {
-                    "product_name": "Adidas Superstar",
+                    "brand_model_name": "Adidas Superstar",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000001,
+                    "discount_id": 4000000,
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Adidas Stan Smith",
+                    "brand_model_name": "Adidas Stan Smith",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000001,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Adidas Ultraboost",
+                    "brand_model_name": "Adidas Ultraboost",
                     "price": random.randint(150, 250),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000001,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -220,24 +226,27 @@ def generate_product_model_data(cursor):
             "name": "Under Armour",
             "models": [
                 {
-                    "product_name": "Under Armour HOVR Sonic",
+                    "brand_model_name": "Under Armour HOVR Sonic",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000002,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Under Armour Curry 7",
+                    "brand_model_name": "Under Armour Curry 7",
                     "price": random.randint(120, 200),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000002,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Under Armour SpeedForm Apollo",
+                    "brand_model_name": "Under Armour SpeedForm Apollo",
                     "price": random.randint(100, 180),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000002,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -246,24 +255,27 @@ def generate_product_model_data(cursor):
             "name": "Puma",
             "models": [
                 {
-                    "product_name": "Puma Clyde",
+                    "brand_model_name": "Puma Clyde",
                     "price": random.randint(60, 120),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000003,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Puma Suede",
+                    "brand_model_name": "Puma Suede",
                     "price": random.randint(60, 120),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000003,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Puma RS-X",
+                    "brand_model_name": "Puma RS-X",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000003,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -272,24 +284,27 @@ def generate_product_model_data(cursor):
             "name": "New Balance",
             "models": [
                 {
-                    "product_name": "New Balance 990",
+                    "brand_model_name": "New Balance 990",
                     "price": random.randint(120, 200),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000004,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "New Balance 574",
+                    "brand_model_name": "New Balance 574",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000004,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "New Balance Fresh Foam 1080",
+                    "brand_model_name": "New Balance Fresh Foam 1080",
                     "price": random.randint(150, 250),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000004,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -298,24 +313,27 @@ def generate_product_model_data(cursor):
             "name": "Reebok",
             "models": [
                 {
-                    "product_name": "Reebok Classic Leather",
+                    "brand_model_name": "Reebok Classic Leather",
                     "price": random.randint(60, 120),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000005,
+                    "discount_id": 4000000,
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Reebok Nano X",
+                    "brand_model_name": "Reebok Nano X",
                     "price": random.randint(100, 180),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000005,
+                    "discount_id": 4000000,
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Reebok Club C",
+                    "brand_model_name": "Reebok Club C",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000005,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -324,24 +342,27 @@ def generate_product_model_data(cursor):
             "name": "Fila",
             "models": [
                 {
-                    "product_name": "Fila Disruptor II",
+                    "brand_model_name": "Fila Disruptor II",
                     "price": random.randint(60, 120),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000006,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Fila Ray Tracer",
+                    "brand_model_name": "Fila Ray Tracer",
                     "price": random.randint(80, 150),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000006,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Fila Mindblower",
+                    "brand_model_name": "Fila Mindblower",
                     "price": random.randint(100, 180),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000006,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -350,24 +371,27 @@ def generate_product_model_data(cursor):
             "name": "Vans",
             "models": [
                 {
-                    "product_name": "Vans Old Skool",
+                    "brand_model_name": "Vans Old Skool",
                     "price": random.randint(60, 120),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000007,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Vans Authentic",
+                    "brand_model_name": "Vans Authentic",
                     "price": random.randint(50, 100),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000007,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Vans Sk8-Hi",
+                    "brand_model_name": "Vans Sk8-Hi",
                     "price": random.randint(70, 130),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000007,
+                    "discount_id": 4000003,
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -376,24 +400,27 @@ def generate_product_model_data(cursor):
             "name": "Asics",
             "models": [
                 {
-                    "product_name": "Asics Gel-Kayano 27",
+                    "brand_model_name": "Asics Gel-Kayano 27",
                     "price": random.randint(120, 200),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000008,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Asics Gel-Nimbus 23",
+                    "brand_model_name": "Asics Gel-Nimbus 23",
                     "price": random.randint(150, 250),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000008,
+                    "discount_id": 4000000,
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Asics Gel-Resolution 8",
+                    "brand_model_name": "Asics Gel-Resolution 8",
                     "price": random.randint(130, 220),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000008,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -402,24 +429,27 @@ def generate_product_model_data(cursor):
             "name": "Brooks",
             "models": [
                 {
-                    "product_name": "Brooks Ghost 13",
+                    "brand_model_name": "Brooks Ghost 13",
                     "price": random.randint(120, 200),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000009,
+                    "discount_id": "Null",
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Brooks Adrenaline GTS 21",
+                    "brand_model_name": "Brooks Adrenaline GTS 21",
                     "price": random.randint(130, 220),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000009,
+                    "discount_id": 4000002,
                     "packaging_id": random.randint(3000000, 3000029)
                 },
                 {
-                    "product_name": "Brooks Glycerin 19",
+                    "brand_model_name": "Brooks Glycerin 19",
                     "price": random.randint(140, 230),
                     "quantity": random.randint(1, 50),
                     "product_id": 7000009,
+                    "discount_id": 4000002,
                     "packaging_id": random.randint(3000000, 3000029)
                 }
             ]
@@ -428,8 +458,8 @@ def generate_product_model_data(cursor):
 
     for brand in brands:
         for model in brand["models"]:
-            request = f"""INSERT INTO Product_Model (product_name, price, quantity, product_id, packaging_id)
-            VALUES('{model["product_name"]}', {model["price"]}, {model["quantity"]}, {model["product_id"]}, {model["packaging_id"]});"""
+            request = f"""INSERT INTO Brand_Model (brand_model_name, price, quantity, discount_id, packaging_id, brand_id)
+            VALUES('{model["brand_model_name"]}', {model["price"]}, {model["quantity"]}, {model["discount_id"]},{model["packaging_id"]}, {model["product_id"]});"""
             cursor.execute(request)
 
 
@@ -451,50 +481,6 @@ def generate_provider_data(cursor, fake):
         VALUES("{provider_name}", {is_featured}, "{featured_image}");"""
         cursor.execute(request)
 
-def generate_categories_data(cursor):
-    categories = [
-        {
-            "category_name" : "Shoes",
-            "parent_category_id" : "NULL",
-            "is_active" : 1
-        },
-        {
-            "category_name": "Sport",
-            "parent_category_id": 1000000,
-            "is_active": 1
-        },
-        {
-            "category_name": "Classic",
-            "parent_category_id": 1000000,
-            "is_active": 1
-        },
-        {
-            "category_name": "Colorways",
-            "parent_category_id": 1000000,
-            "is_active": 1
-        },
-        {
-            "category_name": "Basketball",
-            "parent_category_id": 1000001,
-            "is_active": 1
-        },
-        {
-            "category_name": "Running",
-            "parent_category_id": 1000001,
-            "is_active": 1
-        },
-        {
-            "category_name": "Casual",
-            "parent_category_id": 1000002,
-            "is_active": 1
-        }
-    ]
-
-    for category in categories:
-        request = f"""INSERT INTO Category (category_name,parent_category_id, is_active)
-        VALUES('{category["category_name"]}', {category["parent_category_id"]}, '{category["is_active"]}');"""
-        cursor.execute(request)
-
 def generate_discount_data(cursor, fake):
     for i in range(5):
         discount_rate = random.randint(0, 100)
@@ -507,6 +493,7 @@ def generate_discount_data(cursor, fake):
         is_active = 0
         if(start_date <= datetime.now().date()):
             is_active = 1
+
         request = f"""INSERT INTO Discount (discount_rate, start_date, end_date, is_active)
         VALUES({discount_rate}, "{start_date}", "{end_date}", {is_active});"""
         cursor.execute(request)
@@ -526,10 +513,8 @@ if __name__ == '__main__':
     fake = Faker()
     cursor = db.cursor  # Access the cursor from the Database instance
     generate_customer_data(cursor, fake)
+    generate_discount_data(cursor, fake)
     generate_product_data(cursor)
-    generate_product_packaging_data(cursor)
     generate_product_model_data(cursor)
     generate_provider_data(cursor, fake)
-    generate_categories_data(cursor)
-    generate_discount_data(cursor, fake)
     cursor.execute(create_table)
