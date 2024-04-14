@@ -2,10 +2,11 @@
 import { onMounted, ref } from 'vue'
 import card from "./brand_card.vue"
 
+let isConnected = sessionStorage.getItem("isConnected")//inject("$isConnected")
 let brands = ref([]);
 
 onMounted(async () => {
-  console.log("i am here")
+  console.log("isConnected:", isConnected); // Logging isConnected after it might have been updated
   await fetchBrands();
 })
 
@@ -19,16 +20,14 @@ async function fetchBrands(){
 
   }).then( (response) => {
     return response.json()
-  }).then( (data) => {
-    if (data.status === 200){
+  }).then((data) => {
+    if (data.status === 200) {
       brands.value = data.brands;
       console.log(brands.value)
     }
   })
 }
-
 </script>
-
 
 <template>
   <div class="home">
@@ -41,8 +40,6 @@ async function fetchBrands(){
             :infos="brand"
             :bid="brand.bid"></card>
     </div>
-
-
   </div>
 </template>
 
@@ -56,5 +53,4 @@ async function fetchBrands(){
   justify-content: center;
   flex-wrap: wrap;
 }
-
 </style>
