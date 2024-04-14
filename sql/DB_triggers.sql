@@ -22,6 +22,8 @@ FOR EACH ROW
     END //
 DELIMITER ;
 
+
+
 #Trigger lorsqu’un client désire ajouter un nouvel article dans son panier,gâchette pour vérifier si la quantité en inventaire est suffisante.
 # Si ce n’est pas le cas, un message d’erreur indiquant que la quantité en inventaire est insuffisante est lancé
 

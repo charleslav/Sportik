@@ -16,46 +16,42 @@
   </div>
 </template>
 
-<script>
-import Cookies from "js-cookie"
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      errorMessage: ''
-    };
-  },
-  methods: {
-    login() {
-      // Simulating login functionality
-      fetch("http://127.0.0.1:5000/login", {
-        method: "post",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
+<script setup>
+import { ref, inject } from 'vue';
+import Cookies from 'js-cookie';
+import router from '@/router'
 
-        body: JSON.stringify({
-          username: this.username,
-          password: this.password
-        })
-      })
-        .then((response) => {
-          return response.json()
-        })
-        .then( (data) => {
-          if (data.status === 200) {
-            console.log(data)
-            Cookies.set("user_token", data.token)
-            this.$router.push('/home');
-          } else {
-            this.errorMessage = 'Invalid username or password';
-          }
+const username = ref('');
+const password = ref('');
+const errorMessage = ref('');
+const hostname = inject("$hostname");
 
-        })
-    }
-  }
+const login = () => {
+  fetch(`${hostname}/login`, {
+    method: "post",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 200) {
+        console.log(data);
+        Cookies.set("user_token", data.token);
+        router.push('/');
+      } else {
+        errorMessage.value = 'Invalid username or password';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      errorMessage.value = 'Login failed';
+    });
 };
 </script>
 
