@@ -10,23 +10,34 @@ FOR EACH ROW
         DECLARE  productImage VARCHAR(250);
         DECLARE  descriptionProduct VARCHAR(2000);
 
-        SET productName = (SELECT brand_name FROM Brand WHERE bid = NEW.brand_id);
-        SET productRating = (SELECT brand_rating FROM Brand WHERE bid = NEW.brand_id);
-        SET productImage = (SELECT brand_image FROM Brand WHERE bid = NEW.brand_id);
-        SET descriptionProduct = (SELECT description FROM Brand WHERE bid = NEW.brand_id);
+        IF NEW.brand_id IS NOT NULL THEN
+        SELECT brand_name, brand_rating, brand_image, description INTO productName, productRating, productImage, descriptionProduct
+        FROM Brand
+        WHERE bid = NEW.brand_id;
 
-        SET NEW.brand_name = productName;
-        SET NEW.brand_rating = productRating;
-        SET NEW.brand_image = productImage;
-        SET NEW.description = descriptionProduct;
-    END //
+
+#         SET productName = (SELECT brand_name FROM Brand WHERE bid = NEW.brand_id);
+#         SET productRating = (SELECT brand_rating FROM Brand WHERE bid = NEW.brand_id);
+#         SET productImage = (SELECT brand_image FROM Brand WHERE bid = NEW.brand_id);
+#         SET descriptionProduct = (SELECT description FROM Brand WHERE bid = NEW.brand_id);
+
+        IF productName IS NULL THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'productName not found.';
+        ELSE
+            SET NEW.brand_name = productName;
+            SET NEW.brand_rating = productRating;
+            SET NEW.brand_image = productImage;
+            SET NEW.description = descriptionProduct;
+        END IF;
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product info is missing.';
 DELIMITER ;
 
 #Trigger lorsqu’un client désire ajouter un nouvel article dans son panier,gâchette pour vérifier si la quantité en inventaire est suffisante.
 # Si ce n’est pas le cas, un message d’erreur indiquant que la quantité en inventaire est insuffisante est lancé
 
 DELIMITER //
-CREATE TRIGGER CheckQuantityWhenInsertBrandModelInCart BEFORE INSERT ON Cart
+CREATE TRIGGER CheckQuantityBeforeCartOperation BEFORE INSERT OR UPDATE ON Cart
 FOR EACH ROW
     BEGIN
         DECLARE qtyOfBrandModel INTEGER;
@@ -36,16 +47,16 @@ FOR EACH ROW
     END //
 DELIMITER ;
 
-DELIMITER //
-CREATE TRIGGER checkProductQuantityDuringUpdate BEFORE UPDATE ON Cart
-    FOR EACH ROW
-    BEGIN
-        DECLARE qtyOfBrandModel INTEGER;
-        SET qtyOfBrandModel = (SELECT quantity FROM Brand_Model WHERE bmid = NEW.brand_model_id);
-        IF qtyOfBrandModel < NEW.quantity THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product is Out Of Stock';
-        END IF;
-    END //
-DELIMITER ;
+# DELIMITER //
+# CREATE TRIGGER checkProductQuantityDuringUpdate BEFORE UPDATE ON Cart
+#     FOR EACH ROW
+#     BEGIN
+#         DECLARE qtyOfBrandModel INTEGER;
+#         SET qtyOfBrandModel = (SELECT quantity FROM Brand_Model WHERE bmid = NEW.brand_model_id);
+#         IF qtyOfBrandModel < NEW.quantity THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product is Out Of Stock';
+#         END IF;
+#     END //
+# DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER CheckMultipleSameProductsInCart BEFORE INSERT ON Cart
@@ -62,7 +73,7 @@ DELIMITER ;
 #Création de trigger qui permet d'avoir un apercu du prix total d'un order
 #Ce Trigger sert plus de visualisation lors de l'ajout de nouveaux produits par un Customer
 DELIMITER //
-CREATE TRIGGER insertCustomerPickedItemsInCheckout AFTER INSERT ON Cart
+CREATE TRIGGER SyncCartwPickedItems AFTER INSERT OR UPDATE ON Cart
 FOR EACH ROW
     BEGIN
         DECLARE p_checkout_id INTEGER;
@@ -71,6 +82,7 @@ FOR EACH ROW
             INSERT INTO Checkout (customer_id) VALUES (NEW.cid);
             SET p_checkout_id = LAST_INSERT_ID();
         END IF;
+
         INSERT INTO C_Picked_Items(checkout_id, customer_id, brand_model_id, quantity, order_total, order_total_discount)
                     VALUES (p_checkout_id, NEW.cid, NEW.brand_model_id, NEW.quantity, NEW.order_total, NEW.order_total_discount);
     END //
@@ -88,6 +100,7 @@ FOR EACH ROW
 DELIMITER ;
 
 DROP TRIGGER UpdateCustomerPickedItemsAfterUpdateInCart;
+
 
 #Ce trigger permet de mettre a jour le panier lorsque le Customer enleve dans le panier un item
 DELIMITER //
@@ -179,3 +192,5 @@ CALL updateCheckout(11000000);
 SELECT * FROM orders;
 
 #SELECT * FROM customer;
+
+
