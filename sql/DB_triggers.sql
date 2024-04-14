@@ -1,5 +1,3 @@
--- noinspection SqlDialectInspectionForFile
-
 #Trigger avant insertion de la table Product_Model pour venir inserer les donnes de Product dans la table Product_Model
 #Puisque cette table herite de Product
 
@@ -117,6 +115,7 @@ SELECT * FROM brand_model;
  #SELECT * FROM customer;
 */
 
+
 #Ce trigger permet d'obtenir le prix total d'une commande et de finaliser le prix dans la table checkout
 DELIMITER //
 CREATE TRIGGER produceTotalCheckout AFTER INSERT ON C_Picked_Items
@@ -174,6 +173,4 @@ FOR EACH ROW
         UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id;
     END //
 DELIMITER ;
-
-
 

@@ -8,6 +8,7 @@ CREATE PROCEDURE Search(IN productToSearch VARCHAR(100))
 DELIMITER ;
 
 #Procedure qui permettera de mettre a jour la table Checkout a chaque fois qu'un utilisateur modifie le nombre de produit qu'il veut.
+#Pour trouver le bon checkoud_id dans la table C_Picked_Items, il faut : SELECT checkout_id FROM Checkout WHERE customer_id = 'le customer_id'
 DELIMITER //
 CREATE PROCEDURE updateCheckout(IN p_checkout_id INTEGER)
 BEGIN
@@ -25,5 +26,3 @@ BEGIN
     WHERE checkout_id = p_checkout_id;
 END //
 DELIMITER ;
-
-CALL updateCheckout(11000000);
