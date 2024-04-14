@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="'/brand_model/' + props.bmid" class="product-card">
+  <router-link :to="'/information/' + props.bmid" class="model-card">
     <img :src="props.infos.brand_model_image" :alt="props.infos.brand_name">
     <div class="product-details">
       <h2>{{ props.infos.brand_model_name }}</h2>
@@ -12,7 +12,7 @@ const props = defineProps(["bmid", "infos"]);
 </script>
 
 <style scoped>
-.product-card {
+.model-card {
   display: inline-block;
   margin: 10px;
   padding: 10px;
@@ -24,12 +24,12 @@ const props = defineProps(["bmid", "infos"]);
   transition: transform 0.3s ease;
 }
 
-.product-card:hover {
+.model-card:hover {
   transform: translateY(-5px);
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.product-card img {
+.model-card img {
   width: 100%;
   border-radius: 8px 8px 0 0;
 }

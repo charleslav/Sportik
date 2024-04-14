@@ -49,6 +49,9 @@ class Database:
         results = [dotdict(dict(zip(desc, res))) for res in self.cursor.fetchall()]
         return results
 
+    def set_token(self, token, cid):
+        request = f"""INSERT INTO token (token, customerId) VALUES ('{token}',{cid})"""
+        self.cursor.execute(request)
     def get_user(self, username, password):
         request = f"""SELECT cid FROM sportik.customer WHERE username = '{username}' AND password = '{password}'"""
         self.cursor.execute(request)
@@ -78,11 +81,27 @@ class Database:
         response = self.get_results()
         return response
 
-def insert_todo(text):
-    request = f"""INSERT INTO todo (text) VALUE ("{text}")"""
+    def get_information_by_model_id(self, id):
+        request = f"""SELECT * FROM brand_model WHERE bmid = '{id}'"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
 
-    cursor.execute(request)
+    def get_customer_id_from_token(self, token):
+        request = f"""SELECT customerId FROM token WHERE token = '{token}'"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
 
+    def add_review(self, customer_id, bmid, comment, rating):
+        request = f"""INSERT INTO customer_review (customer_id, brand_model_id, brand_rating_review) VALUES ({customer_id}, {bmid}, '{rating}')"""
+        self.cursor.execute(request)
+
+    def get_review_for_model(self, bmid):
+        request = f"""SELECT * FROM customer_review WHERE brand_model_id = {bmid}"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
 
 
 def generate_customer_data(cursor, fake):
