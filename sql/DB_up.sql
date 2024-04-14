@@ -88,8 +88,7 @@ ALTER TABLE Cart AUTO_INCREMENT=10000000;
 
 CREATE TABLE IF NOT EXISTS Brand_model_image (brand_model_image_id INTEGER AUTO_INCREMENT ,
                                 brand_model_id integer NOT NULL,
-                                image_type ENUM('thumbnail', 'main', 'gallery', 'zoomed') NOT NULL DEFAULT 'main', /*selectionner on veut presenter les images a quel endroit
-                   /*              thumbnail varchar(250) NOT NULL,                      a enlever probablement */
+                                image_type ENUM('thumbnail', 'main', 'gallery', 'zoomed') NOT NULL DEFAULT 'main', /*selectionner on veut presenter les images a quel endroit */
                                  image varchar(250) NOT NULL,
                                  PRIMARY KEY(brand_model_image_id),
                                  FOREIGN KEY(brand_model_id) REFERENCES Brand_Model(bmid));
@@ -104,7 +103,8 @@ CREATE TABLE IF NOT EXISTS Orders (order_id INTEGER AUTO_INCREMENT,
 ALTER TABLE Orders AUTO_INCREMENT=12000000;
 
 
-#Cette table s'affiche avant de finaliser l'achat, par exemple quand on clique sur checkout pour voir les details d'un potientiel achat
+#Cette table s'affiche avant de finaliser achat, par exemple quand on clique sur checkout pour voir les details d'un potientiel achat
+
 CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
                                           order_id INTEGER DEFAULT NULL,
                                           customer_id INTEGER,
@@ -121,6 +121,7 @@ ALTER TABLE Checkout AUTO_INCREMENT=11000000;
 #On peut savoir quel client a ajoute le produit a cause de son lien avec la table Transit_Order
 CREATE TABLE IF NOT EXISTS C_Picked_Items (cpid integer AUTO_INCREMENT,
                      checkout_id INTEGER NOT NULL,
+                     customer_id INTEGER NOT NULL,
                      brand_model_id INTEGER NOT NULL,
                      quantity INTEGER NOT NULL,
                      order_total DECIMAL(10, 2) NOT NULL,
@@ -136,7 +137,8 @@ ALTER TABLE Token AUTO_INCREMENT=13000000;
 
 ALTER TABLE C_Picked_Items
 ADD FOREIGN KEY (checkout_id) REFERENCES Checkout(checkout_id),
-ADD FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid);
+ADD FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid),
+ADD FOREIGN KEY (customer_id) REFERENCES Customer(cid);
 
 
 
