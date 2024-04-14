@@ -71,8 +71,8 @@ FOR EACH ROW
             INSERT INTO Checkout (customer_id) VALUES (NEW.cid);
             SET p_checkout_id = LAST_INSERT_ID();
         END IF;
-        INSERT INTO C_Picked_Items(checkout_id, brand_model_id, quantity, order_total, order_total_discount)
-                    VALUES (p_checkout_id, NEW.brand_model_id, NEW.quantity, NEW.order_total, NEW.order_total_discount);
+        INSERT INTO C_Picked_Items(checkout_id, customer_id, brand_model_id, quantity, order_total, order_total_discount)
+                    VALUES (p_checkout_id, NEW.cid, NEW.brand_model_id, NEW.quantity, NEW.order_total, NEW.order_total_discount);
     END //
 DELIMITER ;
 
@@ -81,12 +81,13 @@ DELIMITER //
 CREATE TRIGGER UpdateCustomerPickedItemsAfterUpdateInCart AFTER UPDATE ON Cart
 FOR EACH ROW
     BEGIN
-        UPDATE c_picked_items SET quantity = NEW.quantity, order_total = NEW.order_total,
-                                  order_total_discount = NEW.order_total_discount
+        UPDATE c_picked_items SET quantity = NEW.quantity
                               WHERE checkout_id = (SELECT checkout_id FROM Checkout WHERE customer_id = NEW.cid AND order_id IS NULL)
                                 AND brand_model_id = NEW.brand_model_id;
     END //
 DELIMITER ;
+
+DROP TRIGGER UpdateCustomerPickedItemsAfterUpdateInCart;
 
 #Ce trigger permet de mettre a jour le panier lorsque le Customer enleve dans le panier un item
 DELIMITER //
@@ -98,27 +99,9 @@ FOR EACH ROW
     END //
 DELIMITER ;
 
-#Ce trigger permet de mettre a jour le panier. Celui-ci plus precisement la quantite
-
-/* Test
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-UPDATE Cart SET quantity = 1 WHERE brand_model_id = 8000002;
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000003, 1, 207, 30);
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000002, 1, 207, 30);
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000012, 1, 207, 30);
-DELETE FROM Cart WHERE brand_model_id = 8000002;
-SELECT * FROM cart;
-SELECT * FROM c_picked_items;
-SELECT * FROM checkout;
-SELECT * FROM orders;
-SELECT * FROM brand_model;
- #SELECT * FROM customer;
-*/
-
-
 #Ce trigger permet d'obtenir le prix total d'une commande et de finaliser le prix dans la table checkout
 DELIMITER //
-CREATE TRIGGER produceTotalCheckout AFTER INSERT ON C_Picked_Items
+CREATE TRIGGER produceTotalCPickedItems AFTER INSERT ON C_Picked_Items
 FOR EACH ROW
     BEGIN
         DECLARE p_checkout_id INTEGER;
@@ -152,8 +135,8 @@ FOR EACH ROW
         SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
         SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
 
-        UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id;
-        UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id;
+        UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
+        UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
     END //
 DELIMITER ;
 
@@ -169,8 +152,27 @@ FOR EACH ROW
         SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
         SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
 
-        UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id;
-        UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id;
+        UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
+        UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
     END //
 DELIMITER ;
+
+/* Test
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
+UPDATE Cart SET quantity = 4 WHERE brand_model_id = 8000002 AND cid = 2000001;
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000003, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000002, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000012, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000003 ,8000002, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000004 ,8000006, 1, 207, 30);
+DELETE FROM Cart WHERE brand_model_id = 8000012;
+SELECT * FROM cart;
+SELECT * FROM c_picked_items;
+SELECT * FROM brand_model;
+SELECT * FROM checkout;
+CALL updateCheckout(11000000);
+SELECT * FROM orders;
+#SELECT * FROM customer;
+*/
+
 

@@ -120,6 +120,7 @@ ALTER TABLE Checkout AUTO_INCREMENT=11000000;
 #On peut savoir quel client a ajoute le produit a cause de son lien avec la table Transit_Order
 CREATE TABLE IF NOT EXISTS C_Picked_Items (cpid integer AUTO_INCREMENT NOT NULL,
                      checkout_id INTEGER NOT NULL,
+                     customer_id INTEGER NOT NULL,
                      brand_model_id INTEGER NOT NULL,
                      quantity INTEGER NOT NULL,
                      order_total DECIMAL(10, 2) NOT NULL,
@@ -129,4 +130,5 @@ ALTER TABLE C_Picked_Items AUTO_INCREMENT=6000000;
 
 ALTER TABLE C_Picked_Items
 ADD FOREIGN KEY (checkout_id) REFERENCES Checkout(checkout_id),
-ADD FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid);
+ADD FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid),
+ADD FOREIGN KEY (customer_id) REFERENCES Customer(cid);
