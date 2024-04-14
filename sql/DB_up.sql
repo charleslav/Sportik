@@ -129,11 +129,10 @@ CREATE TABLE IF NOT EXISTS C_Picked_Items (cpid integer AUTO_INCREMENT,
                      PRIMARY KEY (cpid));
 ALTER TABLE C_Picked_Items AUTO_INCREMENT=6000000;
 
-CREATE TABLE IF NOT EXISTS Token(customer_id integer AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS Token(customer_id integer,
                                 is_active BOOLEAN DEFAULT FALSE,
                                 token varchar(250) DEFAULT NULL,
-                                PRIMARY KEY (customer_id));
-ALTER TABLE Token AUTO_INCREMENT=13000000;
+                                FOREIGN KEY (customer_id) REFERENCES Customer(cid));
 
 ALTER TABLE C_Picked_Items
 ADD FOREIGN KEY (checkout_id) REFERENCES Checkout(checkout_id),
