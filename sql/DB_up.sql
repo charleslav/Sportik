@@ -141,4 +141,3 @@ ADD FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid),
 ADD FOREIGN KEY (customer_id) REFERENCES Customer(cid);
 
 
-
