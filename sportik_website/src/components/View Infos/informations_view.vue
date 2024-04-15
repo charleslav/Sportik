@@ -89,7 +89,7 @@ async function fetchInformation() {
   }).then( (data) => {
     if (data.status === 200){
       infosBrandModel.value = data.modelData;
-      console.log(data)
+      console.log(data.modelData)
     }
   });
 }
@@ -121,7 +121,7 @@ async function fetchReview() {
     <div class="brand-info">
 
       <div class="brand-image">
-        <!-- <img :src="brand_image" alt="Brand Image"> -->
+        <img :src="infosBrandModel.image" alt="Brand Image">
       </div>
 
       <div class="brand-details">

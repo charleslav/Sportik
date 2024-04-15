@@ -60,8 +60,10 @@ class Database:
 
     def insert_customer(self, name, username, password, age, email, customer_adress):
         request = f"""INSERT INTO sportik.customer (name, username, password, age, email, customer_adress) VALUES ('{name}','{username}','{password}',{age},'{email}','{customer_adress}')"""
-
         self.cursor.execute(request)
+        # Assuming you're using MySQL, you can use "cursor.lastrowid" to get the last inserted ID directly.
+        last_inserted_id = self.cursor.lastrowid
+        return last_inserted_id
 
     def get_products(self):
         request = f"""SELECT * from brand"""
@@ -82,7 +84,7 @@ class Database:
         return response
 
     def get_information_by_model_id(self, id):
-        request = f"""SELECT * FROM brand_model WHERE bmid = '{id}'"""
+        request = f"""SELECT * FROM brand_model INNER JOIN sportik.brand_model_image on brand_model.bmid = sportik.brand_model_image.brand_model_id WHERE brand_model.bmid = '{id}'"""
         self.cursor.execute(request)
         response = self.get_results()
         return response
@@ -151,6 +153,12 @@ class Database:
         request = f"""SELECT * FROM checkout WHERE customer_id = {customerId};"""
         self.cursor.execute(request)
         response = self.get_results()
+        requestUpdate = f"""CALL updateCheckout({response[0].checkout_id});"""
+        self.cursor.execute(requestUpdate)
+        request = f"""SELECT * FROM checkout WHERE customer_id = {customerId};"""
+        self.cursor.execute(request)
+        response = self.get_results()
+
         return response
 
 

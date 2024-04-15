@@ -31,18 +31,11 @@
 
         <!-- Payment Information -->
         <h2>Payment Information</h2>
-        <div class="form-group">
-          <label for="card">Credit Card Number:</label>
-          <input type="text" id="card" v-model="paymentInfo.cardNumber">
-        </div>
-        <div class="form-group">
-          <label for="expiry">Expiration Date:</label>
-          <input type="text" id="expiry" v-model="paymentInfo.expiryDate">
-        </div>
-        <div class="form-group">
-          <label for="cvv">CVV:</label>
-          <input type="text" id="cvv" v-model="paymentInfo.cvv">
-        </div>
+        <select v-model="paymentInfo.payment_method" id="payments">
+          <option value="Debit">Debit</option>
+          <option value="Credit">Credit</option>
+          <option value="Cash">Cash</option>
+        </select>
 
         <!-- Error Message -->
         <p v-if="formError" class="error-message">{{ formError }}</p>
@@ -68,7 +61,7 @@
         <!-- Subtotal Taxes and Discount -->
         <div class="taxes-discount">
           <div>SubTotal: ${{ checkoutValue.order_total }}</div>
-          <div>Taxes: ${{ checkoutValue.tax_rate }}</div>
+          <div>Taxes: ${{ checkoutValue.tax_price }}</div>
           <div>Discount: ${{ checkoutValue.total_discount }}</div>
         </div>
 
@@ -101,9 +94,7 @@ const shippingInfo = reactive({
 });
 
 const paymentInfo = reactive({
-  cardNumber: '',
-  expiryDate: '',
-  cvv: ''
+  payment_method: ''
 });
 
 const useAccountInfo = ref(false);
@@ -139,6 +130,7 @@ async function fetchCheckout() {
       alert(data.message);
     } else if (data.status === 200) {
       checkoutValue.value = data.checkout_data;
+      console.log(data.checkout_data)
     }
   } else {
     alert("You are not connected");
@@ -209,12 +201,12 @@ async function placeOrder() {
 function validateAndPlaceOrder() {
   if (!useAccountInfo.value) {
     if (!billingInfo.name.trim() || !billingInfo.email.trim() || !shippingInfo.address.trim() ||
-      !paymentInfo.cardNumber.trim() || !paymentInfo.expiryDate.trim() || !paymentInfo.cvv.trim()) {
+      !paymentInfo.payment_method.trim()) {
       formError.value = 'Please fill in all required fields.';
       return;
     }
   } else {
-    if (!paymentInfo.cardNumber.trim() || !paymentInfo.expiryDate.trim() || !paymentInfo.cvv.trim()) {
+    if (!paymentInfo.payment_method.trim()) {
       formError.value = 'Please fill in all required fields.';
       return;
     }
