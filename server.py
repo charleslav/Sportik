@@ -99,6 +99,7 @@ def getProductById(id):
         "status": 200
     }
     return jsonify(response)
+    return jsonify(response)
 
 @app.route("/information/<int:idModel>", methods=["GET"])
 def getInformationById(idModel):
@@ -145,11 +146,11 @@ def addToCart():
         }
         return jsonify(response)
     except OperationalError as e:
-        if (e.args[0] == 1644):
+
             response = {
                 "status": 401,
-                "message": "Your card already have been added"
-            }
+                "message": e.args[1]}
+
             return jsonify(response)
     except Exception as e:
         response = {

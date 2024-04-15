@@ -1,6 +1,6 @@
 <script setup>
-import { inject, onMounted, ref } from 'vue';
-import Cookies from 'js-cookie';
+import { inject, onMounted, ref } from 'vue'
+import Cookies from 'js-cookie'
 
 
 const props = defineProps(["brandModelId"]);
@@ -19,24 +19,28 @@ async function submitReview(){
 
 
   if (Cookies.get("user_token")){
-  await fetch(`${hostname}/review`, {
-    method: "POST",
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
+    await fetch(`${hostname}/review`, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
 
-    body: JSON.stringify({
-      customer_token: Cookies.get("user_token"),
-      brand_model_id: props.brandModelId,
-      comment: newReview.value.comment,
-      rating: newReview.value.rating
+      body: JSON.stringify({
+        customer_token: Cookies.get("user_token"),
+        brand_model_id: props.brandModelId,
+        comment: newReview.value.comment,
+        rating: newReview.value.rating
+      })
+    }).then( (response) => {
+      return response.json()
+    }).then( (data) => {
+      if (data.status === 200){
+        alert("Review added")
+      }else if(data.status === 401){
+        alert(data.message)
+      }
     })
-  }).then( (response) => {
-    return response
-  }).then( (data) => {
-    console.log(data.status)
-  })
   }else{
     alert("Veuillez vous connecter")
   }
@@ -111,6 +115,8 @@ async function fetchReview() {
     if (data.status === 200) {
       reviews.value = data.reviews
       console.log(data)
+    } else if (data.status === 401) {
+      alert(data.message)
     }
   });
 }
