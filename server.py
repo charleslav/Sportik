@@ -52,8 +52,8 @@ def registerUser():
             "status": 200,
             "token": token
         }
-    except DataError as err:
-        if err.args[0] == 1264:
+    except OperationalError as err:
+        if err.args[0] == 3819:
             response = {
                 "status": 401,
                 "message": "Votre âge n'est pas conforme à nos normes"
@@ -64,6 +64,11 @@ def registerUser():
                 "status": 401,
                 "message": "Votre mail est déjà enregistré"
             }
+    except Exception as err:
+        response = {
+            "status": 401,
+            "message": "Mauvaise enregistrement"
+        }
 
     return jsonify(response)
 

@@ -116,7 +116,7 @@ class Database:
             requestDiscountTotal = f"""SELECT discount_rate FROM discount WHERE did = {discount_id}"""
             self.cursor.execute(requestDiscountTotal)
             response = self.get_results()
-            discount_rate = response[0]["did"]
+            discount_rate = response[0]["discount_rate"]
         else:
             discount_rate = 0
 
