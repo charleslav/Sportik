@@ -208,11 +208,6 @@ def deleteCart(token, bmid):
             "status": 401,
             "message": "Your are not login or your session expired"
         }
-    except Exception as e:
-        response = {
-            "status": 401,
-            "message": "Your are not login or your session expired"
-        }
     return jsonify(response)
 
 @app.route("/user/<string:token>/place_order", methods=["POST"])
