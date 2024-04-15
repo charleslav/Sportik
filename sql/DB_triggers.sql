@@ -110,16 +110,18 @@ FOR EACH ROW
         DECLARE productsTotalDiscount DECIMAL(10, 2);
         DECLARE orderTotal DECIMAL(10, 2);
         DECLARE finalPrice DECIMAL(10,2);
+        DECLARE taxPrice DECIMAL (10,2);
 
         SET productsTotal = (SELECT SUM(order_total) FROM C_Picked_Items WHERE checkout_id = NEW.checkout_id);
         SET productsTotalDiscount = (SELECT SUM(order_total_discount) FROM C_Picked_Items WHERE checkout_id = NEW.checkout_id);
         #SET orderTotal = productsTotal * (SELECT quantity FROM c_picked_items WHERE checkout_id = NEW.checkout_id AND brand_model_id = NEW.brand_model_id);
+        SET taxPrice = (productsTotal * (1 + 0.15)) - productsTotal;
         SET finalPrice = (productsTotal * (1 + 0.15)) - productsTotalDiscount;
 
         SELECT checkout_id INTO p_checkout_id FROM Checkout WHERE customer_id =
                                                           (SELECT customer_id FROM Checkout WHERE checkout_id = NEW.checkout_id)
                                                            AND order_id IS NULL;
-        UPDATE Checkout SET  total_discount = productsTotalDiscount, order_total = productsTotal, total_price=finalPrice
+        UPDATE Checkout SET  tax_price = taxPrice, total_discount = productsTotalDiscount, order_total = productsTotal, total_price=finalPrice
                              WHERE checkout_id = p_checkout_id;
     END //
 DELIMITER ;
@@ -161,20 +163,21 @@ FOR EACH ROW
 DELIMITER ;
 
 /* Test
+
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-UPDATE Cart SET quantity = 8 WHERE brand_model_id = 8000002 AND cid = 2000001;
+UPDATE Cart SET quantity = 3 WHERE brand_model_id = 8000002 AND cid = 2000003;
 UPDATE Brand_Model SET quantity = 20 WHERE bmid = 8000002;
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000003, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000002, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000012, 1, 207, 30);
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000003 ,8000002, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000003 ,8000006, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000006, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-DELETE FROM Cart WHERE brand_model_id = 8000002;
+DELETE FROM Cart WHERE cid = 2000003;
 SELECT * FROM cart;
 SELECT * FROM c_picked_items;
-SELECT * FROM brand_model;
 SELECT * FROM checkout;
+SELECT * FROM brand_model;
 SELECT * FROM brand_model_image;
 CALL updateCheckout(11000000);
 SELECT * FROM orders;

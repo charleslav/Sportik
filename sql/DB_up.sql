@@ -9,7 +9,7 @@ USE Sportik;
 CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT,
                        name varchar(35) NOT NULL,
                        username varchar(50) UNIQUE NOT NULL,
-                       password varchar(50) NOT NULL,
+                       password varchar(500) NOT NULL,
                        age tinyint NOT NULL check(age >= 16),
                        email varchar(40) UNIQUE NOT NULL,
                        customer_adress varchar(255) UNIQUE NOT NULL,
@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
                                           order_id INTEGER DEFAULT NULL,
                                           customer_id INTEGER,
                                           tax_rate DECIMAL(2,2) DEFAULT 0.15,
+                                          tax_price DECIMAL(10, 2),
                                           total_discount DECIMAL (10, 2) DEFAULT NULL,
                                           order_total DECIMAL(10, 2) DEFAULT NULL,
                                           total_price DECIMAL(10, 2) DEFAULT NULL,
@@ -129,14 +130,14 @@ CREATE TABLE IF NOT EXISTS C_Picked_Items (cpid integer AUTO_INCREMENT,
                      PRIMARY KEY (cpid));
 ALTER TABLE C_Picked_Items AUTO_INCREMENT=6000000;
 
-CREATE TABLE IF NOT EXISTS Token(customer_id integer,
-                                is_active BOOLEAN DEFAULT FALSE,
-                                token varchar(250) DEFAULT NULL,
-                                FOREIGN KEY (customer_id) REFERENCES Customer(cid));
-
 ALTER TABLE C_Picked_Items
 ADD FOREIGN KEY (checkout_id) REFERENCES Checkout(checkout_id),
 ADD FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid),
 ADD FOREIGN KEY (customer_id) REFERENCES Customer(cid);
+
+CREATE TABLE IF NOT EXISTS Token(customer_id integer,
+                                is_active BOOLEAN DEFAULT FALSE,
+                                token varchar(250) DEFAULT NULL,
+                                FOREIGN KEY (customer_id) REFERENCES Customer(cid));
 
 
