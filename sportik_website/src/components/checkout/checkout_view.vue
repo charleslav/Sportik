@@ -16,12 +16,12 @@
           <input type="email" id="email" v-model="billingInfo.email">
         </div>
 
-        <!-- Shipping Information -->
+        <!-- Shipping Information
         <h2 v-if="!useAccountInfo">Shipping Information</h2>
         <div class="form-group" v-if="!useAccountInfo">
           <label for="address">Address:</label>
           <input type="text" id="address" v-model="shippingInfo.address">
-        </div>
+        </div>-->
 
         <!-- Account Information Checkbox -->
         <div class="form-group">
@@ -32,9 +32,9 @@
         <!-- Payment Information -->
         <h2>Payment Information</h2>
         <select v-model="paymentInfo.payment_method" id="payments">
-          <option value="Debit">Debit</option>
-          <option value="Credit">Credit</option>
-          <option value="Cash">Cash</option>
+          <option value="Bank Card">Bank Card</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="In Cash">In Cash</option>
         </select>
 
         <!-- Error Message -->
@@ -87,10 +87,6 @@ const hostname = inject("$hostname");
 const billingInfo = reactive({
   name: '',
   email: ''
-});
-
-const shippingInfo = reactive({
-  address: ''
 });
 
 const paymentInfo = reactive({
@@ -169,7 +165,7 @@ async function fetchPlaceorder() {
       },
       body: JSON.stringify({
 
-        payment_method: "credit"
+        payment_method: paymentInfo.payment_method
       })
 
     });
@@ -200,7 +196,7 @@ async function placeOrder() {
 // Validation and place order
 function validateAndPlaceOrder() {
   if (!useAccountInfo.value) {
-    if (!billingInfo.name.trim() || !billingInfo.email.trim() || !shippingInfo.address.trim() ||
+    if (!billingInfo.name.trim() || !billingInfo.email.trim() ||
       !paymentInfo.payment_method.trim()) {
       formError.value = 'Please fill in all required fields.';
       return;
