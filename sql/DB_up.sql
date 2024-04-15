@@ -5,16 +5,6 @@ DROP DATABASE IF EXISTS Sportik;
 CREATE DATABASE IF NOT EXISTS Sportik;
 USE Sportik;
 
-#Index
-#index optimisation login request via Customer
-CREATE INDEX index_c_usermail ON Customer(username, email);
-
-#index mettant a jour article et panier utilisateur specifique via Cart.
-CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
-
-#index filtrant les commandes par statut et date
-CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date);
-
 #Creation des tables #1
 CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT,
                        name varchar(35) NOT NULL,
@@ -106,7 +96,7 @@ ALTER TABLE Brand_model_image AUTO_INCREMENT=5000000;
 
 #Cette table est la finalisation d'un achat. Elle stock les donnees d'une transaction.
 CREATE TABLE IF NOT EXISTS Orders (order_id INTEGER AUTO_INCREMENT,
-                                   payment_method ENUM('Bank Card', 'Credit Cart', 'In Cash') NOT NULL,
+                                   payment_method ENUM('Bank Card', 'Credit Card', 'In Cash') NOT NULL,
                                    payment_status ENUM ('Succes', 'In Progress', 'Denied') NOT NULL DEFAULT 'In Progress',
                                    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    PRIMARY KEY (order_id));
@@ -147,5 +137,15 @@ CREATE TABLE IF NOT EXISTS Token(customer_id integer,
                                 is_active BOOLEAN DEFAULT FALSE,
                                 token varchar(250) DEFAULT NULL,
                                 FOREIGN KEY (customer_id) REFERENCES Customer(cid));
+
+#Index
+#index optimisation login request via Customer
+CREATE INDEX index_c_usermail ON Customer(username, email);
+
+#index mettant a jour article et panier utilisateur specifique via Cart.
+CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
+
+#index filtrant les commandes par statut et date
+CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date);
 
 
