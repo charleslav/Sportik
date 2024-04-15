@@ -1,7 +1,7 @@
 <script setup>
 import { inject, onMounted, ref } from 'vue';
 import Cookies from 'js-cookie';
-import func from '@/func'
+
 
 const props = defineProps(["brandModelId"]);
 const hostname = inject("$hostname");
@@ -14,15 +14,12 @@ let isAdded = ref(false)
 
 const quantity = ref(1); // 1 as default quantity
 
-const submitReview = () => {
+async function submitReview(){
   // Access $function directly from globalProperties
-  const myreturn = func.checkExpiredSession(Cookies.get("user_token"), hostname);
 
-  if(myreturn !== 0){
-    return null
-  }
 
-  fetch(`${hostname}/review`, {
+  if (Cookies.get("user_token")){
+  await fetch(`${hostname}/review`, {
     method: "POST",
     headers: {
       'Accept': 'application/json',
@@ -35,9 +32,16 @@ const submitReview = () => {
       comment: newReview.value.comment,
       rating: newReview.value.rating
     })
+  }).then( (response) => {
+    return response
+  }).then( (data) => {
+    console.log(data.status)
   })
+  }else{
+    alert("Veuillez vous connecter")
+  }
 
-  reviews.value.push({ ...newReview.value });
+  await fetchReview()
 }
 
 onMounted( async () => {
@@ -152,9 +156,9 @@ async function fetchReview() {
       </div>
       <div v-else>
         <div v-for="(review, index) in reviews" :key="index" class="review">
-          <p><strong>User:</strong> {{ review.user }}</p>
+          <p><strong>User:</strong> {{ review.name }}</p>
           <p><strong>Rating:</strong> {{ review.brand_rating_review }}/5</p>
-          <p>{{ review.comment }}</p>
+          <p>{{ review.review }}</p>
         </div>
       </div>
       <!-- Review form -->
