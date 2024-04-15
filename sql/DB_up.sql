@@ -5,6 +5,16 @@ DROP DATABASE IF EXISTS Sportik;
 CREATE DATABASE IF NOT EXISTS Sportik;
 USE Sportik;
 
+#Index
+#index optimisation login request via Customer
+CREATE INDEX index_c_usermail ON Customer(username, email);
+
+#index mettant a jour article et panier utilisateur specifique via Cart.
+CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
+
+#index filtrant les commandes par statut et date
+CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date)
+
 #Creation des tables #1
 CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT,
                        name varchar(35) NOT NULL,
@@ -106,7 +116,6 @@ ALTER TABLE Orders AUTO_INCREMENT=12000000;
 #Cette table s'affiche avant de finaliser achat, par exemple quand on clique sur checkout pour voir les details d'un potientiel achat
 
 CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
-                                          order_id INTEGER DEFAULT NULL,
                                           customer_id INTEGER,
                                           tax_rate DECIMAL(2,2) DEFAULT 0.15,
                                           tax_price DECIMAL(10, 2),
@@ -114,8 +123,7 @@ CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
                                           order_total DECIMAL(10, 2) DEFAULT NULL,
                                           total_price DECIMAL(10, 2) DEFAULT NULL,
                                           PRIMARY KEY (checkout_id),
-                                          FOREIGN KEY (customer_id) REFERENCES Customer(cid),
-                                          FOREIGN KEY (order_id) REFERENCES Orders(order_id));
+                                          FOREIGN KEY (customer_id) REFERENCES Customer(cid));
 ALTER TABLE Checkout AUTO_INCREMENT=11000000;
 
 #Cette table permet d'afficher les produits qui seront ajoute au panier d'un client.
