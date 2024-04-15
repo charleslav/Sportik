@@ -641,32 +641,22 @@ def generate_provider_data(cursor, fake):
 
 # Fonction pour générer des avis clients
 def generate_reviews(num_reviews, fake):
-    try:
-        with connection.cursor() as cursor:
-            for _ in range(num_reviews):
-                # Sélection aléatoire d'un client existant
-                cursor.execute("SELECT cid FROM Customer ORDER BY RAND() LIMIT 1")
-                customer_id = cursor.fetchone()['cid']
+    for _ in range(num_reviews):
+         # Sélection aléatoire d'un client existant
+         cursor.execute("SELECT cid FROM Customer ORDER BY RAND() LIMIT 1")
+         customer_id = cursor.fetchone()[0]
 
-                # Sélection aléatoire d'un modèle de marque existant
-                cursor.execute("SELECT bmid FROM Brand_Model ORDER BY RAND() LIMIT 1")
-                brand_model_id = cursor.fetchone()['bmid']
+         # Sélection aléatoire d'un modèle de marque existant
+         cursor.execute("SELECT bmid FROM Brand_Model ORDER BY RAND() LIMIT 1")
+         brand_model_id = cursor.fetchone()[0]
 
-                # Génération d'une note et d'un avis aléatoires
-                brand_rating = random.randint(1, 5)
-                brand_review = fake.text(max_nb_chars=1000)
+         # Génération d'une note et d'un avis aléatoires
+         brand_rating = random.randint(1, 5)
 
-                # Insertion de l'avis dans la table Customer_review
-                sql = "INSERT INTO Customer_review (customer_id, brand_model_id, brand_rating_review) VALUES (%s, %s, %s)"
-                cursor.execute(sql, (customer_id, brand_model_id, f"{brand_rating} stars - {brand_review}"))
+         # Insertion de l'avis dans la table Customer_review
+         sql = "INSERT INTO Customer_review (customer_id, brand_model_id, brand_rating_review, review) VALUES (%s, %s, %s, %s)"
+         cursor.execute(sql, (customer_id, brand_model_id, brand_rating, fake.text(max_nb_chars=2499)))
 
-            # Valider les modifications
-            connection.commit()
-            print(f"{num_reviews} avis clients ont été ajoutés avec succès.")
-    except Exception as e:
-        print(f"Une erreur s'est produite : {str(e)}")
-    finally:
-        connection.close()
 
 if __name__ == '__main__':
     db = Database()  # Create an instance of the Database class
@@ -678,4 +668,5 @@ if __name__ == '__main__':
     generate_product_data(cursor)
     generate_product_model_data(cursor)
     generate_provider_data(cursor, fake)
+    generate_reviews(120, fake)
     cursor.execute(create_table)
