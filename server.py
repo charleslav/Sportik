@@ -1,11 +1,10 @@
+import pymysql
+import uuid
 from flask import Flask, render_template, Response, jsonify, request
-
 from flask_cors import CORS, cross_origin
 
 from database import Database
-
-import uuid
-
+from pymysql import OperationalError
 myDatabase = Database()
 
 app = Flask(__name__)
@@ -104,9 +103,75 @@ def addToCart():
     try:
         customerId = verifyToken(body["token"]);
     except:
-        return jsonify()
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
+    try:
+        var = myDatabase.add_to_cart(customerId, body["bmid"], body["quantity"])
+        response = {
+            "status": 200
+        }
+    except OperationalError as e:
+        if (e.args[0] == 1644):
+            response = {
+                "status": 401,
+                "message": "Your card already have been added"
+            }
+    except Exception as e:
+        response = {
+            "status": 401,
+            "message": "Something went wrong"
+        }
+
+    return jsonify(response)
+
+@app.route("/cart/<string:token>", methods=["GET"])
+def getCart(token):
+    try:
+        customerId = verifyToken(token);
+    except:
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
+
+    try:
+        data = myDatabase.get_cart(customerId);
+
+        response = {
+            "status": 200,
+            "cart": data
+        }
+    except Exception as e:
+        response = {
+            "status": 401,
+            "message": "Something went wrong"
+        }
+    return jsonify(response)
+
+
+@app.route("/cart/quantity", methods=["PUT"])
+def updateQuantity():
     body = request.get_json()
-    getToken(body["token"])
+    try:
+        customerId = verifyToken(body["token"]);
+    except:
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
+    try:
+        data = myDatabase.update_quantity_cart(customerId, body["bmid"], body["quantity"])
+        response = {
+            "status": 200}
+    except Exception as e:
+        response = {
+            "status": 401,
+            "message": "Something went wrong"
+        }
+    jsonResponse = jsonify(response)
+    return jsonResponse
 
 
 @app.route("/token/<string:token>", methods=["GET"])
@@ -117,14 +182,16 @@ def getToken(token):
             "status": 200,
             "customerId": customerId
         }
-    except Exception as e:
+    except OperationalError as e:
         response = {
             "status": 401
         }
+    except Error as e:
+        response = {}
     return jsonify(response)
 
 def verifyToken(token):
-    return myDatabase.get_customer_id_from_token(token)[0]["customerId"]
+    return myDatabase.get_customer_id_from_token(token)[0]["customer_id"]
 
 
 @app.route("/review/<int:bmid>", methods=["GET"])
