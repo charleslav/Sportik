@@ -115,7 +115,7 @@ FOR EACH ROW
         SET productsTotal = (SELECT SUM(order_total) FROM C_Picked_Items WHERE checkout_id = NEW.checkout_id);
         SET productsTotalDiscount = (SELECT SUM(order_total_discount) FROM C_Picked_Items WHERE checkout_id = NEW.checkout_id);
         #SET orderTotal = productsTotal * (SELECT quantity FROM c_picked_items WHERE checkout_id = NEW.checkout_id AND brand_model_id = NEW.brand_model_id);
-        SET taxPrice = (productsTotal * (1 + 0.15)) - productsTotal;
+        SET taxPrice = productsTotal * 0.15;
         SET finalPrice = (productsTotal * (1 + 0.15)) - productsTotalDiscount;
 
         SELECT checkout_id INTO p_checkout_id FROM Checkout WHERE customer_id =
@@ -199,11 +199,12 @@ DELIMITER ;
 
 /* Test
 
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-UPDATE Cart SET quantity = 3 WHERE brand_model_id = 8000002 AND cid = 2000003;
+
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000001, 1, 207, 30);
+UPDATE Cart SET quantity = 3 WHERE brand_model_id = 8000006 AND cid = 2000002;
 UPDATE Brand_Model SET quantity = 20 WHERE bmid = 8000002;
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000003, 1, 207, 30);
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000002, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000006, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000012, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000003 ,8000006, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000006, 1, 207, 30);
@@ -214,10 +215,9 @@ SELECT * FROM c_picked_items;
 SELECT * FROM checkout;
 SELECT * FROM brand_model;
 SELECT * FROM brand_model_image;
-CALL updateCheckout(11000000);
+CALL updateCheckout(11000001);
 SELECT * FROM orders;
 
 
 */
-
 
