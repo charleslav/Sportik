@@ -96,7 +96,7 @@ ALTER TABLE Brand_model_image AUTO_INCREMENT=5000000;
 
 #Cette table est la finalisation d'un achat. Elle stock les donnees d'une transaction.
 CREATE TABLE IF NOT EXISTS Orders (order_id INTEGER AUTO_INCREMENT,
-                                   payment_method ENUM('Bank Card', 'Credit Cart', 'In Cash') NOT NULL,
+                                   payment_method ENUM('Bank Card', 'Credit Card', 'In Cash') NOT NULL,
                                    payment_status ENUM ('Succes', 'In Progress', 'Denied') NOT NULL DEFAULT 'In Progress',
                                    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    PRIMARY KEY (order_id));
@@ -106,7 +106,6 @@ ALTER TABLE Orders AUTO_INCREMENT=12000000;
 #Cette table s'affiche avant de finaliser achat, par exemple quand on clique sur checkout pour voir les details d'un potientiel achat
 
 CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
-                                          order_id INTEGER DEFAULT NULL,
                                           customer_id INTEGER,
                                           tax_rate DECIMAL(2,2) DEFAULT 0.15,
                                           tax_price DECIMAL(10, 2),
@@ -114,8 +113,7 @@ CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
                                           order_total DECIMAL(10, 2) DEFAULT NULL,
                                           total_price DECIMAL(10, 2) DEFAULT NULL,
                                           PRIMARY KEY (checkout_id),
-                                          FOREIGN KEY (customer_id) REFERENCES Customer(cid),
-                                          FOREIGN KEY (order_id) REFERENCES Orders(order_id));
+                                          FOREIGN KEY (customer_id) REFERENCES Customer(cid));
 ALTER TABLE Checkout AUTO_INCREMENT=11000000;
 
 #Cette table permet d'afficher les produits qui seront ajoute au panier d'un client.
@@ -140,4 +138,22 @@ CREATE TABLE IF NOT EXISTS Token(customer_id integer,
                                 token varchar(250) DEFAULT NULL,
                                 FOREIGN KEY (customer_id) REFERENCES Customer(cid));
 
+#Index
+#index optimisation login request via Customer
+CREATE INDEX index_c_usermail ON Customer(username, email);
 
+#index mettant a jour article et panier utilisateur specifique via Cart.
+CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
+
+#index filtrant les commandes par statut et date
+CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date);
+
+
+#index optimisation login request via Customer
+CREATE INDEX index_c_usermail ON Customer(username, email);
+
+#index mettant a jour article et panier utilisateur specifique via Cart.
+CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
+
+#index filtrant les commandes par statut et date
+CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date)
