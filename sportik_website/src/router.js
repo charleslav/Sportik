@@ -13,7 +13,6 @@ import Service_view from "@/components/service_view.vue"
 import Contact_view from '@/components/contact_view.vue'
 import Logout_Home from '@/components/Logout/logout_view.vue'
 import Layout from '@/components/layout_basic.vue'
-import Checkout_view from '@/components/checkout/checkout_view.vue'
 
 const routes = [
   {
@@ -29,8 +28,7 @@ const routes = [
       { path: "information/:brandModelId", component: informations_view, props: true},
       { path: "services", component: Service_view},
       { path: "contact", component: Contact_view},
-      { path: "logout", component: Logout_Home},
-      { path: "checkout", component: Checkout_view}
+      { path: "logout", component: Logout_Home}
     ]
   }
 ]
