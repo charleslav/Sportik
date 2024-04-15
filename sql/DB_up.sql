@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT,
                        password varchar(500) NOT NULL,
                        age tinyint NOT NULL check(age >= 16),
                        email varchar(40) UNIQUE NOT NULL,
-                       customer_adress varchar(255) UNIQUE NOT NULL,
+                       customer_adress varchar(255) NOT NULL,
                        creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                        card_total_price integer DEFAULT 0,
                        PRIMARY KEY(cid));
@@ -96,7 +96,7 @@ ALTER TABLE Brand_model_image AUTO_INCREMENT=5000000;
 
 #Cette table est la finalisation d'un achat. Elle stock les donnees d'une transaction.
 CREATE TABLE IF NOT EXISTS Orders (order_id INTEGER AUTO_INCREMENT,
-                                   payment_method varchar(20) NOT NULL,
+                                   payment_method ENUM('Bank Card', 'Credit Cart', 'In Cash') NOT NULL,
                                    payment_status ENUM ('Succes', 'In Progress', 'Denied') NOT NULL DEFAULT 'In Progress',
                                    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    PRIMARY KEY (order_id));
