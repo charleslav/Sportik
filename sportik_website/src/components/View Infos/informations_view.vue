@@ -7,8 +7,10 @@ const props = defineProps(["brandModelId"]);
 const hostname = inject("$hostname");
 const infosBrandModel = ref({});
 
+
 const reviews = ref([]);
 const newReview = ref({ user: '', rating: 5, comment: '' });
+let isAdded = ref(false)
 
 const quantity = ref(1); // 1 as default quantity
 
@@ -48,15 +50,30 @@ onMounted( async () => {
 
 const addToCart = async () => {
 
-  
 
-  const my_response = await func.checkExpiredSession(hostname);
-  console.log(my_response.status)
-  if (my_response === 201){
-    console.log("Product added to cart!");
-  }else{
-    console.log("failed")
-  }
+  await fetch(`${hostname}/cart`, {
+    method: "POST",
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      token: Cookies.get("user_token"),
+      bmid: Number(props.brandModelId),
+      quantity : quantity.value
+    })
+  }).then( (response) => {
+    return response.json()
+  }).then((response_data) => {
+    if (response_data.status === 401) {
+      alert(response_data.message)
+    }else if(response_data.status === 200){
+      isAdded.value = true;
+    }
+  })
+
+
+
 
 }
 
@@ -118,10 +135,13 @@ async function fetchReview() {
 
         <div>
           <label for="quantity">Quantity:</label>
-          <input v-model="quantity" id="quantity" type="number" min="1">
+          <input v-model="quantity" id="quantity" type="number" min="1" :max="infosBrandModel.quantity">
         </div>
-
-        <button class="add-to-cart-button" @click="addToCart">Add to Cart</button>
+        <label v-if="isAdded">Your product was added, great job !</label>
+        <div>
+          <button class="add-to-cart-button" @click="addToCart">Add to Cart</button>
+        </div>
+        
       </div>
     </div>
     <!-- Review section -->

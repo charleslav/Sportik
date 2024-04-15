@@ -160,9 +160,6 @@ FOR EACH ROW
 DELIMITER ;
 
 /* Test
-
-*/
-
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
 UPDATE Cart SET quantity = 4 WHERE brand_model_id = 8000002 AND cid = 2000001;
 UPDATE Brand_Model SET quantity = 20 WHERE bmid = 8000002;
@@ -179,5 +176,8 @@ SELECT * FROM brand_model;
 SELECT * FROM checkout;
 CALL updateCheckout(11000000);
 SELECT * FROM orders;
+
+*/
+
 
 #SELECT * FROM customer;
