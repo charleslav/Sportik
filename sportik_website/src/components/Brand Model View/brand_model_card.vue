@@ -1,6 +1,6 @@
 <template>
   <router-link :to="'/information/' + props.bmid" class="model-card">
-    <img :src="props.infos.brand_model_image" :alt="props.infos.brand_name">
+    <img :src="props.infos.image" :alt="props.infos.brand_name">
     <div class="product-details">
       <h2>{{ props.infos.brand_model_name }}</h2>
     </div>
@@ -22,6 +22,7 @@ const props = defineProps(["bmid", "infos"]);
   text-decoration: none;
   color: black;
   transition: transform 0.3s ease;
+  align-content: center;
 }
 
 .model-card:hover {
