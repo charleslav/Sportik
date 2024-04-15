@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS Customer_review (crid integer AUTO_INCREMENT,
                               brand_model_id integer,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               brand_rating_review varchar(1000),
+                              review varchar(2500),
                               PRIMARY KEY(crid),
                               FOREIGN KEY (customer_id) REFERENCES Customer(cid),
                               FOREIGN KEY (brand_model_id) REFERENCES Brand_Model(bmid));
