@@ -13,7 +13,7 @@ CREATE INDEX index_c_usermail ON Customer(username, email);
 CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
 
 #index filtrant les commandes par statut et date
-CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date)
+CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date);
 
 #Creation des tables #1
 CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT,
