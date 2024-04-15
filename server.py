@@ -52,8 +52,8 @@ def registerUser():
             "status": 200,
             "token": token
         }
-    except DataError as err:
-        if err.args[0] == 1264:
+    except OperationalError as err:
+        if err.args[0] == 3819:
             response = {
                 "status": 401,
                 "message": "Votre âge n'est pas conforme à nos normes"
@@ -64,6 +64,11 @@ def registerUser():
                 "status": 401,
                 "message": "Votre mail est déjà enregistré"
             }
+    except Exception as err:
+        response = {
+            "status": 401,
+            "message": "Mauvaise enregistrement"
+        }
 
     return jsonify(response)
 
@@ -208,6 +213,21 @@ def deleteCart(token, bmid):
             "status": 401,
             "message": "Your are not login or your session expired"
         }
+
+@app.route("/user/<string:token>/checkout", methods=["GET"])
+def getCheckout(token):
+    try:
+        customerId = verifyToken(token)
+        data = myDatabase.get_checkout(customerId)[0]
+        response = {
+            "status": 200,
+            "checkout_data": data}
+
+    except Exception as e:
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
     return jsonify(response)
 
 @app.route("/user/<string:token>/place_order", methods=["POST"])
@@ -215,7 +235,7 @@ def add_order(token):
     try:
         body = request.get_json()
         customerId = verifyToken(token)
-        myDatabase.place_order(body["payment_method"])
+        myDatabase.place_order(body["payment_method"], customerId)
         response = {
             "status": 200,
             }

@@ -116,7 +116,7 @@ class Database:
             requestDiscountTotal = f"""SELECT discount_rate FROM discount WHERE did = {discount_id}"""
             self.cursor.execute(requestDiscountTotal)
             response = self.get_results()
-            discount_rate = response[0]["did"]
+            discount_rate = response[0]["discount_rate"]
         else:
             discount_rate = 0
 
@@ -126,6 +126,11 @@ class Database:
     def place_order(self, payment_method, customerId):
         request = f"""INSERT INTO orders (payment_method, payment_status) VALUES ('{payment_method}', 'Succes')"""
         requestDelete = f"""DELETE FROM cart WHERE cid = {customerId}"""
+        requestCheckoutId = f"""SELECT checkout_id from checkout WHERE customer_id = {customerId}"""
+        self.cursor.execute(requestCheckoutId)
+        checkout_id = self.get_results()[0]["checkout_id"]
+        requestUpdate = f"""CALL updateStockQuantityAfterPurchase({checkout_id})"""
+        self.cursor.execute(requestUpdate)
         self.cursor.execute(request)
         self.cursor.execute(requestDelete)
 
