@@ -106,6 +106,7 @@ ALTER TABLE Orders AUTO_INCREMENT=12000000;
 #Cette table s'affiche avant de finaliser achat, par exemple quand on clique sur checkout pour voir les details d'un potientiel achat
 
 CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
+                                          order_id INTEGER DEFAULT NULL,
                                           customer_id INTEGER,
                                           tax_rate DECIMAL(2,2) DEFAULT 0.15,
                                           tax_price DECIMAL(10, 2),
@@ -113,7 +114,8 @@ CREATE TABLE IF NOT EXISTS Checkout (checkout_id INTEGER AUTO_INCREMENT,
                                           order_total DECIMAL(10, 2) DEFAULT NULL,
                                           total_price DECIMAL(10, 2) DEFAULT NULL,
                                           PRIMARY KEY (checkout_id),
-                                          FOREIGN KEY (customer_id) REFERENCES Customer(cid));
+                                          FOREIGN KEY (customer_id) REFERENCES Customer(cid),
+                                          FOREIGN KEY (order_id) REFERENCES Orders(order_id));
 ALTER TABLE Checkout AUTO_INCREMENT=11000000;
 
 #Cette table permet d'afficher les produits qui seront ajoute au panier d'un client.
