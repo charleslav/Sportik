@@ -67,9 +67,10 @@ const register = () => {
       if(data.status === 200) {
         console.log(data);
         Cookies.set('user_token', data.token);
-        router.push('/home');
-      } else {
-        errorMessage.value = 'Registration failed';
+        router.push('/');
+
+      } else if (data.status === 401) {
+        errorMessage.value = data.message;
       }
     })
     .catch(error => {
