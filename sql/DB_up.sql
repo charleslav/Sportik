@@ -149,3 +149,11 @@ CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
 CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date);
 
 
+#index optimisation login request via Customer
+CREATE INDEX index_c_usermail ON Customer(username, email);
+
+#index mettant a jour article et panier utilisateur specifique via Cart.
+CREATE INDEX index_cart_cid_bmid ON Cart(cid, brand_model_id);
+
+#index filtrant les commandes par statut et date
+CREATE INDEX index_orders_status_date ON Orders(payment_status, order_date)

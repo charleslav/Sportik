@@ -16,12 +16,12 @@
           <input type="email" id="email" v-model="billingInfo.email">
         </div>
 
-        <!-- Shipping Information -->
+        <!-- Shipping Information
         <h2 v-if="!useAccountInfo">Shipping Information</h2>
         <div class="form-group" v-if="!useAccountInfo">
           <label for="address">Address:</label>
           <input type="text" id="address" v-model="shippingInfo.address">
-        </div>
+        </div>-->
 
         <!-- Account Information Checkbox -->
         <div class="form-group">
@@ -31,18 +31,11 @@
 
         <!-- Payment Information -->
         <h2>Payment Information</h2>
-        <div class="form-group">
-          <label for="card">Credit Card Number:</label>
-          <input type="text" id="card" v-model="paymentInfo.cardNumber">
-        </div>
-        <div class="form-group">
-          <label for="expiry">Expiration Date:</label>
-          <input type="text" id="expiry" v-model="paymentInfo.expiryDate">
-        </div>
-        <div class="form-group">
-          <label for="cvv">CVV:</label>
-          <input type="text" id="cvv" v-model="paymentInfo.cvv">
-        </div>
+        <select v-model="paymentInfo.payment_method" id="payments">
+          <option value="Bank Card">Bank Card</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="In Cash">In Cash</option>
+        </select>
 
         <!-- Error Message -->
         <p v-if="formError" class="error-message">{{ formError }}</p>
@@ -68,7 +61,7 @@
         <!-- Subtotal Taxes and Discount -->
         <div class="taxes-discount">
           <div>SubTotal: ${{ checkoutValue.order_total }}</div>
-          <div>Taxes: ${{ checkoutValue.tax_rate }}</div>
+          <div>Taxes: ${{ checkoutValue.tax_price }}</div>
           <div>Discount: ${{ checkoutValue.total_discount }}</div>
         </div>
 
@@ -96,14 +89,8 @@ const billingInfo = reactive({
   email: ''
 });
 
-const shippingInfo = reactive({
-  address: ''
-});
-
 const paymentInfo = reactive({
-  cardNumber: '',
-  expiryDate: '',
-  cvv: ''
+  payment_method: ''
 });
 
 const useAccountInfo = ref(false);
@@ -139,6 +126,7 @@ async function fetchCheckout() {
       alert(data.message);
     } else if (data.status === 200) {
       checkoutValue.value = data.checkout_data;
+      console.log(data.checkout_data)
     }
   } else {
     alert("You are not connected");
@@ -177,7 +165,7 @@ async function fetchPlaceorder() {
       },
       body: JSON.stringify({
 
-        payment_method: "credit"
+        payment_method: paymentInfo.payment_method
       })
 
     });
@@ -208,13 +196,13 @@ async function placeOrder() {
 // Validation and place order
 function validateAndPlaceOrder() {
   if (!useAccountInfo.value) {
-    if (!billingInfo.name.trim() || !billingInfo.email.trim() || !shippingInfo.address.trim() ||
-      !paymentInfo.cardNumber.trim() || !paymentInfo.expiryDate.trim() || !paymentInfo.cvv.trim()) {
+    if (!billingInfo.name.trim() || !billingInfo.email.trim() ||
+      !paymentInfo.payment_method.trim()) {
       formError.value = 'Please fill in all required fields.';
       return;
     }
   } else {
-    if (!paymentInfo.cardNumber.trim() || !paymentInfo.expiryDate.trim() || !paymentInfo.cvv.trim()) {
+    if (!paymentInfo.payment_method.trim()) {
       formError.value = 'Please fill in all required fields.';
       return;
     }

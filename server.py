@@ -4,8 +4,7 @@ from flask import Flask, render_template, Response, jsonify, request
 from flask_cors import CORS, cross_origin
 
 from database import Database
-from pymysql import OperationalError, DataError, IntegrityError
-from hashlib import sha256
+from pymysql import OperationalError
 myDatabase = Database()
 
 app = Flask(__name__)
@@ -20,8 +19,9 @@ def index():
 @app.route("/login", methods=["POST"])
 def getUser():
     data = request.json
-    cid = myDatabase.get_user(data["username"], sha256(data["password"].encode('utf-8')).hexdigest())[0]
-    if cid is None:
+    try:
+        cid = myDatabase.get_user(data["username"], sha256(data["password"].encode('utf-8')).hexdigest())[0]
+    except TypeError :
         return jsonify({"status": "400", "message": "Invalid username or password"})
 
     my_uuid = str(uuid.uuid4())
@@ -41,13 +41,15 @@ def getUser():
 def registerUser():
     body = request.json
     try:
-        myDatabase.insert_customer(body["name"],
+        cid = myDatabase.insert_customer(body["name"],
                                body["username"], sha256(body["password"].encode("utf-8")).hexdigest(),
                                body["age"], body["email"],
                                body["address"])
+        token = uuid.uuid4()
+        myDatabase.set_token(token, cid)
         response = {
             "status": 200,
-            "token": uuid.uuid4()
+            "token": token
         }
     except DataError as err:
         if err.args[0] == 1264:
@@ -62,6 +64,10 @@ def registerUser():
                 "message": "Votre mail est déjà enregistré"
             }
 
+    response = {
+        "status": 200,
+        "token": uuid.uuid4()
+    }
     return jsonify(response)
 
 
@@ -121,22 +127,26 @@ def addToCart():
             "status": 401,
             "message": "Your are not login or your session expired"
         }
+        return jsonify(response)
     try:
         var = myDatabase.add_to_cart(customerId, body["bmid"], body["quantity"])
         response = {
             "status": 200
         }
+        return jsonify(response)
     except OperationalError as e:
         if (e.args[0] == 1644):
             response = {
                 "status": 401,
                 "message": "Your card already have been added"
             }
+            return jsonify(response)
     except Exception as e:
         response = {
             "status": 401,
             "message": "Something went wrong"
         }
+        return jsonify(response)
 
     return jsonify(response)
 
@@ -202,14 +212,6 @@ def deleteCart(token, bmid):
             "message": "Your are not login or your session expired"
         }
 
-@app.route("/user/<string:token>/checkout", methods=["GET"])
-def getCheckout(token):
-    try:
-        customerId = verifyToken(token)
-        data = myDatabase.get_checkout(customerId)[0]
-        response = {
-            "status": 200,
-            "checkout_data": data}
 
     except Exception as e:
         response = {
@@ -223,7 +225,7 @@ def add_order(token):
     try:
         body = request.get_json()
         customerId = verifyToken(token)
-        myDatabase.place_order(body["payment_method"])
+        myDatabase.place_order(body["payment_method"], customerId)
         response = {
             "status": 200,
             }
