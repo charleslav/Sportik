@@ -208,6 +208,21 @@ def deleteCart(token, bmid):
             "status": 401,
             "message": "Your are not login or your session expired"
         }
+
+@app.route("/user/<string:token>/checkout", methods=["GET"])
+def getCheckout(token):
+    try:
+        customerId = verifyToken(token)
+        data = myDatabase.get_checkout(customerId)[0]
+        response = {
+            "status": 200,
+            "checkout_data": data}
+
+    except Exception as e:
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
     return jsonify(response)
 
 @app.route("/user/<string:token>/place_order", methods=["POST"])
@@ -215,7 +230,7 @@ def add_order(token):
     try:
         body = request.get_json()
         customerId = verifyToken(token)
-        myDatabase.place_order(body["payment_method"])
+        myDatabase.place_order(body["payment_method"], customerId)
         response = {
             "status": 200,
             }

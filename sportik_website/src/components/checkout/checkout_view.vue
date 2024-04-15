@@ -32,9 +32,9 @@
         <!-- Payment Information -->
         <h2>Payment Information</h2>
         <select v-model="paymentInfo.payment_method" id="payments">
-          <option value="Debit">Debit</option>
-          <option value="Credit">Credit</option>
-          <option value="Cash">Cash</option>
+          <option value="Bank Card">Bank Card</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="In Cash">In Cash</option>
         </select>
 
         <!-- Error Message -->
@@ -169,7 +169,7 @@ async function fetchPlaceorder() {
       },
       body: JSON.stringify({
 
-        payment_method: "credit"
+        payment_method: paymentInfo.payment_method
       })
 
     });
