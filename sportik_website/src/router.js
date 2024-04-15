@@ -9,7 +9,9 @@ import Monpanier_view from '@/components/monpanier_view.vue'
 import ItemModel_view from '@/components/Item View/itemModel_view.vue'
 import informations_view from "@/components/View Infos/informations_view.vue"
 import Brand_Model_View from '@/components/Brand Model View/brand_model_view.vue'
-import Layout from '@/components/layout.vue'
+import Service_view from "@/components/service_view.vue"
+import Contact_view from '@/components/contact_view.vue'
+import Layout from '@/components/layout_basic.vue'
 
 const routes = [
   {
@@ -22,7 +24,9 @@ const routes = [
       { path: "cart", component: Monpanier_view},
       { path: "item/:itemId", component: ItemModel_view, props: true},
       { path: "brand_model/:brandId", component: Brand_Model_View, props: true},
-      { path: "brand_model/:brandId", component: informations_view, props: true}
+      { path: "information/:brandModelId", component: informations_view, props: true},
+      { path: "services", component: Service_view},
+      { path: "contact", component: Contact_view}
     ]
   }
 ]

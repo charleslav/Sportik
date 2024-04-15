@@ -26,58 +26,56 @@
         <label for="email">Email:</label>
         <input type="email" id="email" v-model="email" required>
       </div>
-      <button type="submit" @click="register">Register</button>
+      <button type="submit">Register</button>
     </form>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
 </template>
 
-<script>
-import Cookies from "js-cookie"
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      address: '',
-      name: '',
-      age: null,
-      email: '',
-      errorMessage: ''
-    };
-  },
-  methods: {
-    register() {
-      // Simulating registration functionality
-      fetch("http://127.0.0.1:5000/register", {
-        method: "post",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: this.username,
-          password: this.password,
-          address: this.address,
-          name: this.name,
-          age: this.age,
-          email: this.email
-        })
-      })
-        .then((response) => {
-          return response.json()
-        })
-        .then( (data) => {
-          if(data.status === 200){
-            console.log(data)
-            Cookies.set("user_token",data.token)
-            this.$router.push('/home');
-          }else{
-            this.errorMessage = 'Registration failed';
-          }
-        })
-    }
-  }
+<script setup>
+import { ref, inject } from 'vue';
+import Cookies from 'js-cookie';
+import router from '@/router'
+
+const username = ref('');
+const password = ref('');
+const address = ref('');
+const name = ref('');
+const age = ref(null);
+const email = ref('');
+const errorMessage = ref('');
+const hostname = inject('$hostname');
+
+const register = () => {
+  fetch(`${hostname}/register`, {
+    method: 'post',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value,
+      address: address.value,
+      name: name.value,
+      age: age.value,
+      email: email.value
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if(data.status === 200) {
+        console.log(data);
+        Cookies.set('user_token', data.token);
+        router.push('/home');
+      } else {
+        errorMessage.value = 'Registration failed';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      errorMessage.value = 'Registration failed';
+    });
 };
 </script>
 
