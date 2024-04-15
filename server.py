@@ -4,7 +4,8 @@ from flask import Flask, render_template, Response, jsonify, request
 from flask_cors import CORS, cross_origin
 
 from database import Database
-from pymysql import OperationalError
+from pymysql import OperationalError, DataError, IntegrityError
+from hashlib import sha256
 myDatabase = Database()
 
 app = Flask(__name__)
@@ -64,10 +65,6 @@ def registerUser():
                 "message": "Votre mail est déjà enregistré"
             }
 
-    response = {
-        "status": 200,
-        "token": uuid.uuid4()
-    }
     return jsonify(response)
 
 
@@ -211,13 +208,6 @@ def deleteCart(token, bmid):
             "status": 401,
             "message": "Your are not login or your session expired"
         }
-
-
-    except Exception as e:
-        response = {
-            "status": 401,
-            "message": "Your are not login or your session expired"
-        }
     return jsonify(response)
 
 @app.route("/user/<string:token>/place_order", methods=["POST"])
@@ -225,7 +215,7 @@ def add_order(token):
     try:
         body = request.get_json()
         customerId = verifyToken(token)
-        myDatabase.place_order(body["payment_method"], customerId)
+        myDatabase.place_order(body["payment_method"])
         response = {
             "status": 200,
             }
