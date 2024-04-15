@@ -28,7 +28,6 @@ async function fetchBrandModel() {
     }
   })
 }
-
 </script>
 
 <template>

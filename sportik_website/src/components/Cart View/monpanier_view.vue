@@ -3,7 +3,6 @@
 <script setup>
 import { inject, onMounted, ref } from 'vue'
 import Cookies from 'js-cookie'
-import router from '@/router'
 const hostname = inject("$hostname");
 let cartItems = ref([]);
 
@@ -89,8 +88,7 @@ async function fetchCarts(){
 
 const pay = () => {
   // Logic for payment (e.g., redirect to payment page)
-  //alert('Redirecting to payment page...');
-  router.push("checkout")
+  alert('Redirecting to payment page...');
 };
 </script>
 
