@@ -1,40 +1,37 @@
-<template>
-  <div class="my-cart">
-    <h2>My Cart</h2>
-    <div v-if="cartItems.length === 0">
-      <p>Your cart is empty.</p>
-    </div>
-    <div v-else>
-      <ul>
-        <li v-for="(item, index) in cartItems" :key="index">
-          <img :src="item.image" alt="Product Image" style="width: 50px; height: 50px; margin-right: 10px;">
-          <div>
-            <span>{{ item.brand_model_name }}</span><br>
-            <span>Price: ${{ item.price }}</span><br>
-            <span>Quantity: <input type="number" v-model="item.quantity" min="1" :max="item.stock" @input="updateQuantity(index)" @click="onClickQuantity(item)" class="quantity-input"></span>
-          </div>
-          <button @click="removeFromCart(index)">Remove</button>
-        </li>
-      </ul>
-      <button @click="pay" v-if="cartItems.length > 0">Pay</button>
-    </div>
-  </div>
-</template>
+
 
 <script setup>
 import { inject, onMounted, ref } from 'vue'
 import Cookies from 'js-cookie'
+import router from '@/router'
 const hostname = inject("$hostname");
 let cartItems = ref([]);
 
 onMounted(async () => {
+
   await fetchCarts()
 })
 
 
-const removeFromCart = (index) => {
-  cartItems.value.splice(index, 1); // Remove item from cart
-};
+async function removeFromCart(item) {
+  if (Cookies.get("user_token")) {
+    await fetch(`${hostname}/user/${Cookies.get("user_token")}/cart/${item.brand_model_id}`, {
+      method: "DELETE",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => {
+      return response.json()
+    }).then((data) => {
+      console.log(data)
+    })
+    await fetchCarts()
+  }else{
+    alert("You are not connected")
+  }
+
+}
 
 const updateQuantity = (index) => {
   // Ensure quantity is a positive integer
@@ -76,7 +73,11 @@ async function fetchCarts(){
       return response.json()
     }).then((data) => {
       console.log(data.cart)
-      cartItems.value = data.cart;
+      if (data.status === 401){
+        alert(data.message)
+      }else if(data.status === 200){
+        cartItems.value = data.cart;
+      }
     })
   }else{
     alert("You are not connected")
@@ -88,9 +89,34 @@ async function fetchCarts(){
 
 const pay = () => {
   // Logic for payment (e.g., redirect to payment page)
-  alert('Redirecting to payment page...');
+  //alert('Redirecting to payment page...');
+  router.push("checkout")
 };
 </script>
+
+<template>
+  <div class="my-cart">
+    <h2>My Cart</h2>
+    <div v-if="cartItems.length === 0">
+      <p>Your cart is empty.</p>
+    </div>
+    <div v-else>
+      <ul>
+        <li v-for="(item, index) in cartItems" :key="index">
+          <img :src="item.image" alt="Product Image" style="width: 50px; height: 50px; margin-right: 10px;">
+          <div>
+            <span>{{ item.brand_model_name }}</span><br>
+            <span>Price: ${{ item.price }}</span><br>
+            <span>Quantity: <input type="number" v-model="item.quantity" min="1" :max="item.stock" @input="updateQuantity(index)" @click="onClickQuantity(item)" class="quantity-input"></span>
+          </div>
+          <button @click="removeFromCart(item)">Remove</button>
+        </li>
+      </ul>
+      <button @click="pay" v-if="cartItems.length > 0">Pay</button>
+    </div>
+  </div>
+</template>
+
 
 <style>
 .my-cart {
