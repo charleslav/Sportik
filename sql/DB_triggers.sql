@@ -89,7 +89,6 @@ FOR EACH ROW
     END //
 DELIMITER ;
 
-DROP TRIGGER UpdateCustomerPickedItemsAfterUpdateInCart;
 
 #Ce trigger permet de mettre a jour le panier lorsque le Customer enleve dans le panier un item
 DELIMITER //
@@ -137,6 +136,7 @@ FOR EACH ROW
         SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
         SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
 
+        UPDATE c_picked_items SET quantity = qty WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
         UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
         UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
     END //
@@ -154,30 +154,33 @@ FOR EACH ROW
         SET orderTotal = (SELECT order_total FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
         SET orderTotalDiscount = (SELECT order_total_discount FROM Cart WHERE brand_model_id = NEW.brand_model_id AND cid = NEW.cid);
 
+        UPDATE c_picked_items SET quantity = qty WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
         UPDATE c_picked_items SET order_total = qty * orderTotal WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
         UPDATE c_picked_items SET order_total_discount = qty * orderTotalDiscount WHERE brand_model_id = NEW.brand_model_id AND customer_id = NEW.cid;
     END //
 DELIMITER ;
 
 /* Test
-
-*/
-
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-UPDATE Cart SET quantity = 4 WHERE brand_model_id = 8000002 AND cid = 2000001;
+UPDATE Cart SET quantity = 8 WHERE brand_model_id = 8000002 AND cid = 2000001;
 UPDATE Brand_Model SET quantity = 20 WHERE bmid = 8000002;
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000003, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000002, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000012, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000003 ,8000002, 1, 207, 30);
-INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000004 ,8000006, 1, 207, 30);
+INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000002 ,8000006, 1, 207, 30);
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
-DELETE FROM Cart WHERE brand_model_id = 8000012;
+DELETE FROM Cart WHERE brand_model_id = 8000002;
 SELECT * FROM cart;
 SELECT * FROM c_picked_items;
 SELECT * FROM brand_model;
 SELECT * FROM checkout;
+SELECT * FROM brand_model_image;
 CALL updateCheckout(11000000);
 SELECT * FROM orders;
 
-#SELECT * FROM customer;
+INSERT INTO brand_model_image(brand_model_id, image_type, image) VALUES (8000002 , 'main', 'test');
+
+
+*/
+
