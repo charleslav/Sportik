@@ -4,8 +4,7 @@ from flask import Flask, render_template, Response, jsonify, request
 from flask_cors import CORS, cross_origin
 
 from database import Database
-from pymysql import OperationalError, DataError, IntegrityError
-from hashlib import sha256
+from pymysql import OperationalError
 myDatabase = Database()
 
 app = Flask(__name__)
@@ -20,7 +19,7 @@ def index():
 @app.route("/login", methods=["POST"])
 def getUser():
     data = request.json
-    cid = myDatabase.get_user(data["username"], sha256(data["password"].encode('utf-8')).hexdigest())[0]
+    cid = myDatabase.get_user(data["username"], data["password"])[0]
     if cid is None:
         return jsonify({"status": "400", "message": "Invalid username or password"})
 
@@ -40,28 +39,15 @@ def getUser():
 @app.route("/register", methods=["POST"])
 def registerUser():
     body = request.json
-    try:
-        myDatabase.insert_customer(body["name"],
-                               body["username"], sha256(body["password"].encode("utf-8")).hexdigest(),
+    myDatabase.insert_customer(body["name"],
+                               body["username"], body["password"],
                                body["age"], body["email"],
                                body["address"])
-        response = {
-            "status": 200,
-            "token": uuid.uuid4()
-        }
-    except DataError as err:
-        if err.args[0] == 1264:
-            response = {
-                "status": 401,
-                "message": "Votre âge n'est pas conforme à nos normes"
-            }
-    except IntegrityError as err:
-        if err.args[0] == 1062:
-            response = {
-                "status": 401,
-                "message": "Votre mail est déjà enregistré"
-            }
 
+    response = {
+        "status": 200,
+        "token": uuid.uuid4()
+    }
     return jsonify(response)
 
 
@@ -202,38 +188,7 @@ def deleteCart(token, bmid):
             "message": "Your are not login or your session expired"
         }
 
-@app.route("/user/<string:token>/checkout", methods=["GET"])
-def getCheckout(token):
-    try:
-        customerId = verifyToken(token)
-        data = myDatabase.get_checkout(customerId)[0]
-        response = {
-            "status": 200,
-            "checkout_data": data}
 
-    except Exception as e:
-        response = {
-            "status": 401,
-            "message": "Your are not login or your session expired"
-        }
-    return jsonify(response)
-
-@app.route("/user/<string:token>/place_order", methods=["POST"])
-def add_order(token):
-    try:
-        body = request.get_json()
-        customerId = verifyToken(token)
-        myDatabase.place_order(body["payment_method"])
-        response = {
-            "status": 200,
-            }
-
-    except Exception as e:
-        response = {
-            "status": 401,
-            "message": "Your are not login or your session expired"
-        }
-    return jsonify(response)
 
 @app.route("/token/<string:token>", methods=["GET"])
 def getToken(token):

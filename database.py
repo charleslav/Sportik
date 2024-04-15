@@ -70,7 +70,7 @@ class Database:
         return response
 
     def get_brand_id(self, brand_id):
-        request = f"""SELECT * FROM brand_model INNER JOIN sportik.brand_model_image on brand_model.bmid = sportik.brand_model_image.brand_model_id WHERE brand_model.brand_id = '{brand_id}'"""
+        request = f"""SELECT * FROM brand_model WHERE brand_id = '{brand_id}'"""
         self.cursor.execute(request)
         response = self.get_results()
         return response
@@ -121,12 +121,6 @@ class Database:
         request = f"""INSERT INTO cart (cid, brand_model_id, quantity, order_total, order_total_discount) VALUES ({customer_id}, {bmid}, {quantity}, {price}, {discount_rate})"""
         self.cursor.execute(request)
 
-    def place_order(self, payment_method, customerId):
-        request = f"""INSERT INTO orders (payment_method, payment_status) VALUES ('{payment_method}', 'Succes')"""
-        requestDelete = f"""DELETE FROM cart WHERE cid = {customerId}"""
-        self.cursor.execute(request)
-        self.cursor.execute(requestDelete)
-
     def get_cart(self, customerId):
         request = f"""SELECT cart.brand_model_id, cid, cart.quantity, brand_model.price, brand_model.quantity AS stock, 
             brand_model.brand_model_name, brand_model_image.image
@@ -147,12 +141,6 @@ class Database:
         request = f"""DELETE FROM cart WHERE brand_model_id = {bmid} AND cid = {customerId};"""
         self.cursor.execute(request)
 
-    def get_checkout(self, customerId):
-        request = f"""SELECT * FROM checkout WHERE customer_id = {customerId};"""
-        self.cursor.execute(request)
-        response = self.get_results()
-        return response
-
 
 def generate_customer_data(cursor, fake):
     for i in range(100):
@@ -172,61 +160,61 @@ def generate_product_data(cursor):
         {
             "brand_name": "Jordan",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco,u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/61089404-82a0-4adb-a6c2-a88ae94b76c1/chaussure-air-jordan-1-elevate-high-pour-kFQLcG.png",
+            "brand_image": "Sportik/images/Jordan.png",
             "description": "Air Jordan is a renowned line of basketball shoes and athletic clothing produced by Nike. It was created for former NBA player Michael Jordan and released to the public on April 1, 1985. The shoes were designed by Peter Moore, Tinker Hatfield, and Bruce Kilgore, and are known for their innovative design, performance, and cultural impact."
         },
         {
             "brand_name": "Adidas",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/15f901c90a9549d29104aae700d27efb_9366/Chaussure_Superstar_noir_EG4959_01_standard.jpg",
+            "brand_image": "Sportik/images/Adidas.png",
             "description": "Adidas AG is a German athletic apparel and footwear corporation headquartered in Herzogenaurach, Bavaria, Germany. It is the largest sportswear manufacturer in Europe, and the second largest in the world, after Nike."
         },
         {
             "brand_name": "Under Armour",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://underarmour.scene7.com/is/image/Underarmour/3025516-003_DEFAULT?rp=standard-30pad%7CpdpMainDesktop&scl=1&fmt=jpg&qlt=85&resMode=sharp2&cache=on%2Con&bgc=f0f0f0&wid=566&hei=708&size=536%2C688",
+            "brand_image": "Sportik/images/Under_Armour.png",
             "description": "Under Armour, Inc. is an American sportswear company that manufactures footwear and apparel headquartered in Baltimore, Maryland, United States."
         },
         {
             "brand_name": "Puma",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://m.media-amazon.com/images/I/51CVBOSNjoL._AC_SY575_.jpg",
+            "brand_image": "Sportik/images/Puma.png",
             "description": "Puma SE is a German multinational corporation that designs and manufactures athletic and casual footwear, apparel, and accessories, headquartered in Herzogenaurach, Bavaria, Germany. Puma is the third largest sportswear manufacturer in the world."
         },
         {
             "brand_name": "New Balance",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://nb.scene7.com/is/image/NB/wl574evw_nb_02_i?$pdpflexf2$&wid=440&hei=440",
+            "brand_image": "Sportik/images/New_Balance.png",
             "description": "New Balance is one of the worlds major sports footwear and apparel manufacturers. Based in Boston, Massachusetts, the multinational corporation was founded in 1906 as the New Balance Arch Support Company."
         },
         {
             "brand_name": "Reebook",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://m.media-amazon.com/images/I/51KqpzgpztS._AC_SY575_.jpg",
+            "brand_image": "Sportik/images/Reebook.png",
             "description": "Reebok International Limited is an American footwear and clothing company founded in Bolton, England, and headquartered in Boston, Massachusetts."
         },
         {
             "brand_name": "Fila",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://m.media-amazon.com/images/I/61K2k-8GKZL._AC_UY900_.jpg",
+            "brand_image": "Sportik/images/Fila.png",
             "description": "Fila is an Italian-South Korean sporting goods company founded in 1911 in Biella, Italy, and now based in Seoul."
         },
         {
             "brand_name": "Vans",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://m.media-amazon.com/images/I/71bsjxWjrxL._AC_UY900_.jpg",
+            "brand_image": "Sportik/images/Vans.png",
             "description": "Vans is an American manufacturer of skateboarding shoes and related apparel, based in Santa Ana, California, owned by VF Corporation."
         },
         {
             "brand_name": "Asics",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://i.ebayimg.com/images/g/ryAAAOSwgMdlKROA/s-l1200.webp",
+            "brand_image": "Sportik/images/Asics.png",
             "description": "Asics is a Japanese multinational corporation which produces sports equipment designed for a wide range of sports."
         },
         {
             "brand_name": "Brooks",
             "brand_rating": random.randint(0, 5),
-            "brand_image": "https://m.media-amazon.com/images/I/81FC5MZk8SL._AC_UY900_.jpg",
+            "brand_image": "Sportik/images/Brooks.png",
             "description": "Brooks is an American athletic footwear brand known for its innovative designs and high-performance running shoes. Founded in 1914, Brooks has a long history of providing runners with comfortable and durable footwear engineered to enhance performance and prevent injury. Whether youre a seasoned marathoner or a casual jogger, Brooks shoes are designed to provide optimal support, cushioning, and stability to help you achieve your running goals. With a commitment to quality and innovation, Brooks continues to be a trusted choice for runners of all levels around the world."
         }
     ]
@@ -537,49 +525,6 @@ def generate_product_model_data(cursor):
             VALUES('{model["brand_model_name"]}', {model["price"]}, {model["quantity"]}, {model["discount_id"]},{model["packaging_id"]}, {model["product_id"]});"""
             cursor.execute(request)
 
-def generate_brand_model_image(cursor):
-    brand_model_ids = list(range(8000000, 8000030))
-    image_urls = [
-        "https://cdn-images.farfetch-contents.com/13/15/76/97/13157697_21516295_600.jpg",
-        "https://i.ebayimg.com/images/g/0oYAAOSwKS1jHHqN/s-l1200.jpg",
-        "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit,f_auto/e0083865-8eb4-47d4-8404-e2dd9e767513/date-de-sortie-de-la-air-jordan%C2%A05-%C2%AB%C2%A0racer-blue%C2%A0%C2%BB-ct4838-004.jpg",
-        "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/f74a314d42b2411db478e2e0a2c2c7c4_9366/Superstar_Shoes_Blue_IF1581_01_standard.jpg",
-        "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/e01dea68cf93434bae5aac0900af99e8_9366/Chaussure_Stan_Smith_blanc_FX5500_01_standard.jpg",
-        "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/c608f554cb3b4d12b392af000188c513_9366/Chaussure_Ultraboost_1.0_noir_HQ4199_01_standard.jpg",
-        "https://underarmour.scene7.com/is/image/Underarmour/3024898-001_DEFAULT?rp=standard-30pad%7CpdpMainDesktop&scl=1&fmt=jpg&qlt=85&resMode=sharp2&cache=on%2Con&bgc=f0f0f0&wid=566&hei=708&size=536%2C688",
-        "https://cdn-images.farfetch-contents.com/20/17/10/58/20171058_50032045_600.jpg",
-        "https://ca.shop.runningroom.com/media/catalog/product/cache/453c4871d8f4dcbe6098dec5e744d96c/_/1/_1245952_m_b_r_1.jpg",
-        "https://i.ebayimg.com/images/g/RrwAAOSwV9Nk-KJJ/s-l1200.webp",
-        "https://m.media-amazon.com/images/I/51dHwNeY9LL._AC_UY900_.jpg",
-        "https://media.sneakerpricer.com/media/puma-chaussure-sneakers-rs-x-soft-femme-rose-pearlpink-393772_05-a205709b-c92a-4521-864a-06a6a7d0513e_thumbnail_2x_jpeg.jpg",
-        "https://nb.scene7.com/is/image/NB/m990gl6_nb_02_i?$pdpflexf2$&wid=440&hei=440",
-        "https://nb.scene7.com/is/image/NB/gc574evw_nb_02_i?$dw_detail_gallery$",
-        "https://ca.shop.runningroom.com/media/catalog/product/cache/623252543a71a417af50138275bda2d9/m/1/m1080g11_2.jpg",
-        "https://reebok.ca/cdn/shop/products/GY0960B0020_3e5cfc71-f936-4ac4-a59b-ea252a46607a.jpg?v=1667960570",
-        "https://m.media-amazon.com/images/I/61O8ZrQHx8L._AC_UY900_.jpg",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm0GmsyGqeiUfVTXna1u6XOlLQIh41M8ofQ3mstNsnWQ&s",
-        "https://images.journeys.ca/images/products/1_457372_FS_HERO.JPG",
-        "https://m.media-amazon.com/images/I/71LjtMLJ2RL._AC_UY900_.jpg",
-        "https://i.ebayimg.com/images/g/E6kAAOSwq5BcukNt/s-l1200.webp",
-        "https://m.media-amazon.com/images/I/71bsjxWjrxL._AC_UY900_.jpg",
-        "https://images.vans.com/is/image/Vans/VN000EE3_BKA_HERO?wid=800&hei=1004&fmt=jpeg&qlt=50&resMode=sharp2&op_usm=0.9,1.5,8,0",
-        "https://cdn.skatepro.com/product/520/vans-skate-sk8-hi-shoes-g5.webp",
-        "https://images.asics.com/is/image/asics/1011A767_001_SR_RT_GLB?$sfcc-product$",
-        "https://m.media-amazon.com/images/I/61KViYUcC6L._AC_UY900_.jpg",
-        "https://img.runningwarehouse.com/watermark/rsg.php?path=/content_images/reviews/Brooks_Adrenaline_21/Brooks_Adrenaline_21-R1.jpg&nw=728",
-        "https://lecoureurnordique.ca/cdn/shop/products/brooks-glycerin-19-femme-le-coureur-nordique-29_700x700.jpg?v=1668745697",
-        "https://shopsolescience.ca/cdn/shop/products/Glycerin-19-Ombre-Violet-Lavender-45_600x.jpg?v=1621026027",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQt0BL-yHrsA8CTja_rz_pLk6q3rkLHfz1tEN-GwpGhAw&s"
-
-    ]
-    index = 0
-    for brand_model_id in brand_model_ids:
-            image_url = image_urls[index]
-            request = f"""INSERT INTO Brand_model_image (brand_model_id, image_type, image)
-                            VALUES({brand_model_id}, 'main', '{image_url}');"""
-            cursor.execute(request)
-            print(index)
-            index = index + 1
 
 def generate_product_packaging_data(cursor):
     for i in range(30):
@@ -635,5 +580,4 @@ if __name__ == '__main__':
     generate_product_data(cursor)
     generate_product_model_data(cursor)
     generate_provider_data(cursor, fake)
-    generate_brand_model_image(cursor)
     cursor.execute(create_table)
