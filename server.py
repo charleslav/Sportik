@@ -112,7 +112,15 @@ def getInformationById(idModel):
 @app.route("/review", methods=["POST"])
 def addReview():
     body = request.get_json()
-    customerId = myDatabase.get_customer_id_from_token(body["customer_token"])[0]["customerId"]
+    try:
+        customerId = verifyToken(body["customer_token"]);
+    except:
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
+        return jsonify(response)
+
     myDatabase.add_review(customerId, body["brand_model_id"], body["comment"], body["rating"]);
     response = {
         "status": 200

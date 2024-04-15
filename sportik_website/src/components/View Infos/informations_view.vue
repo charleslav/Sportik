@@ -1,7 +1,7 @@
 <script setup>
 import { inject, onMounted, ref } from 'vue';
 import Cookies from 'js-cookie';
-import func from '@/func'
+
 
 const props = defineProps(["brandModelId"]);
 const hostname = inject("$hostname");
@@ -14,15 +14,12 @@ let isAdded = ref(false)
 
 const quantity = ref(1); // 1 as default quantity
 
-const submitReview = () => {
+async function submitReview(){
   // Access $function directly from globalProperties
-  const myreturn = func.checkExpiredSession(Cookies.get("user_token"), hostname);
 
-  if(myreturn !== 0){
-    return null
-  }
 
-  fetch(`${hostname}/review`, {
+  if (Cookies.get("user_token")){
+  await fetch(`${hostname}/review`, {
     method: "POST",
     headers: {
       'Accept': 'application/json',
@@ -35,9 +32,16 @@ const submitReview = () => {
       comment: newReview.value.comment,
       rating: newReview.value.rating
     })
+  }).then( (response) => {
+    return response
+  }).then( (data) => {
+    console.log(data.status)
   })
+  }else{
+    alert("Veuillez vous connecter")
+  }
 
-  reviews.value.push({ ...newReview.value });
+  await fetchReview()
 }
 
 onMounted( async () => {
