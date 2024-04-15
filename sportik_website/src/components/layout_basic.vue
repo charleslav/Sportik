@@ -1,21 +1,12 @@
-<script setup>
-
-
-
-
-
-
-</script>
-
 <template>
   <div class="navbar">
     <router-link to="/" class="nav-link">Home</router-link>
-    <router-link to="/services" class="nav-link">services</router-link>
-    <router-link to="/contact" class="nav-link">contact</router-link>
+    <router-link to="/services" class="nav-link">Services</router-link>
+    <router-link to="/contact" class="nav-link">Contact</router-link>
     <router-link to="/register" class="register-icon"><i class="fas fa-user-plus"></i></router-link>
     <router-link to="/login" class="sign-in-icon"><i class="fas fa-sign-in-alt"></i></router-link>
-
     <router-link to="/cart" class="cart-icon"><i class="fas fa-shopping-cart"></i></router-link>
+    <router-link to="/logout" class="logout-icon">Logout</router-link>
   </div>
   <router-view></router-view>
 </template>
@@ -36,18 +27,14 @@
 }
 
 .nav-link:hover {
-  background-color: #CCC5B9;
+  background-color: #EB5E28;
   color: #403D39;
 }
 
-.nav-link.router-link-exact-active {
-  background-color: #EB5E28;
-}
-
 .sign-in-icon,
-.user-icon,
 .register-icon,
-.cart-icon {
+.cart-icon,
+.logout-icon {
   float: right;
   padding: 14px 10px; /* Adjusted padding */
   color: #FFFCF2;

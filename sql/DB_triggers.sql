@@ -182,11 +182,7 @@ SELECT * FROM brand_model_image;
 CALL updateCheckout(11000000);
 SELECT * FROM orders;
 
-INSERT INTO brand_model_image(brand_model_id, image_type, image) VALUES (8000002 , 'main', 'test');
-
-CALL updateStockQuantityAfterPurchase (11000000);
-
-DELETE FROM Cart WHERE cid = 2000003;
 
 */
+
 

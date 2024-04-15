@@ -12,7 +12,7 @@ from pymysql import IntegrityError
 
 # from sql_utils import run_sql_file
 
-class dotdict(dict):
+class Dotdict(dict):
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -46,11 +46,11 @@ class Database:
 
     def get_results(self):
         desc = [d[0] for d in self.cursor.description]
-        results = [dotdict(dict(zip(desc, res))) for res in self.cursor.fetchall()]
+        results = [Dotdict(dict(zip(desc, res))) for res in self.cursor.fetchall()]
         return results
 
     def set_token(self, token, cid):
-        request = f"""INSERT INTO token (token, customerId) VALUES ('{token}',{cid})"""
+        request = f"""INSERT INTO token (token, customer_id) VALUES ('{token}',{cid})"""
         self.cursor.execute(request)
     def get_user(self, username, password):
         request = f"""SELECT cid FROM sportik.customer WHERE username = '{username}' AND password = '{password}'"""
@@ -88,7 +88,7 @@ class Database:
         return response
 
     def get_customer_id_from_token(self, token):
-        request = f"""SELECT customerId FROM token WHERE token = '{token}'"""
+        request = f"""SELECT customer_id FROM token WHERE token = '{token}'"""
         self.cursor.execute(request)
         response = self.get_results()
         return response
@@ -102,6 +102,40 @@ class Database:
         self.cursor.execute(request)
         response = self.get_results()
         return response
+
+    def add_to_cart(self, customer_id, bmid, quantity):
+        requestBrandModel = f"""SELECT price, discount_id FROM brand_model WHERE bmid = {bmid}"""
+        self.cursor.execute(requestBrandModel)
+        response = self.get_results()
+        price = response[0]["price"]
+        discount_id = response[0]["discount_id"]
+
+        if discount_id is not None:
+            requestDiscountTotal = f"""SELECT discount_rate FROM discount WHERE did = {discount_id}"""
+            self.cursor.execute(requestDiscountTotal)
+            response = self.get_results()
+            discount_rate = response[0]["did"]
+        else:
+            discount_rate = 0
+
+        request = f"""INSERT INTO cart (cid, brand_model_id, quantity, order_total, order_total_discount) VALUES ({customer_id}, {bmid}, {quantity}, {price}, {discount_rate})"""
+        self.cursor.execute(request)
+
+    def get_cart(self, customerId):
+        request = f"""SELECT cart.brand_model_id, cid, cart.quantity, brand_model.price, brand_model.quantity AS stock, 
+            brand_model.brand_model_name, brand_model_image.image
+            FROM Cart
+            INNER JOIN Brand_Model
+            ON Cart.brand_model_id = Brand_Model.bmid
+            INNER JOIN brand_model_image
+            on Brand_Model.bmid = brand_model_image.brand_model_id WHERE cid = {customerId} AND image_type = "main";"""
+        self.cursor.execute(request)
+        response = self.get_results()
+        return response
+
+    def update_quantity_cart(self, customerId, bmid, quantity):
+        request = f"""UPDATE Cart SET quantity = {quantity} WHERE brand_model_id = {bmid} AND cid = {customerId};"""
+        self.cursor.execute(request)
 
 
 def generate_customer_data(cursor, fake):
