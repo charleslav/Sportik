@@ -156,9 +156,9 @@ async function fetchReview() {
       </div>
       <div v-else>
         <div v-for="(review, index) in reviews" :key="index" class="review">
-          <p><strong>User:</strong> {{ review.user }}</p>
+          <p><strong>User:</strong> {{ review.name }}</p>
           <p><strong>Rating:</strong> {{ review.brand_rating_review }}/5</p>
-          <p>{{ review.comment }}</p>
+          <p>{{ review.review }}</p>
         </div>
       </div>
       <!-- Review form -->

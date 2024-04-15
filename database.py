@@ -100,7 +100,7 @@ class Database:
         self.cursor.execute(request)
 
     def get_review_for_model(self, bmid):
-        request = f"""SELECT * FROM customer_review WHERE brand_model_id = {bmid}"""
+        request = f"""SELECT * FROM customer_review INNER JOIN customer on customer_review.customer_id = customer.cid WHERE brand_model_id = {bmid}"""
         self.cursor.execute(request)
         response = self.get_results()
         return response
@@ -678,4 +678,5 @@ if __name__ == '__main__':
     generate_product_data(cursor)
     generate_product_model_data(cursor)
     generate_provider_data(cursor, fake)
+    generate_brand_model_image(cursor)
     cursor.execute(create_table)
