@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Customer (cid integer AUTO_INCREMENT,
                        password varchar(500) NOT NULL,
                        age tinyint NOT NULL check(age >= 16),
                        email varchar(40) UNIQUE NOT NULL,
-                       customer_adress varchar(255) UNIQUE NOT NULL,
+                       customer_adress varchar(255) NOT NULL,
                        creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                        card_total_price integer DEFAULT 0,
                        PRIMARY KEY(cid));
