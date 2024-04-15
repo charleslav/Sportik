@@ -26,3 +26,26 @@ BEGIN
     WHERE checkout_id = p_checkout_id;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE updateStockQuantityAfterPurchase(IN p_checkout_id INTEGER)
+BEGIN
+    curseur: BEGIN
+
+    #Check si le Checkout ID qu'on passe est bon.
+    IF NOT EXISTS (SELECT 1 FROM Checkout WHERE checkout_id = p_checkout_id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid checkout ID';
+        LEAVE curseur;
+    END IF;
+
+    #Update la quantite de brand model
+    UPDATE Brand_Model bm
+    INNER JOIN C_Picked_Items cpi ON bm.bmid = cpi.brand_model_id
+    SET bm.quantity = bm.quantity - cpi.quantity
+    WHERE cpi.checkout_id = p_checkout_id;
+
+    END curseur;
+    COMMIT;
+END //
+
+DELIMITER ;

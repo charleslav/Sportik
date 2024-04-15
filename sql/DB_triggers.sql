@@ -162,6 +162,41 @@ FOR EACH ROW
     END //
 DELIMITER ;
 
+#Ce trigger met à jour le isInStock avant un insert
+DELIMITER //
+
+CREATE TRIGGER updateIsInStockBeforeInsert
+BEFORE INSERT ON Brand_Model
+FOR EACH ROW
+BEGIN
+    -- Check if the quantity being inserted is greater than 0
+    IF NEW.quantity <= 0 THEN
+        SET NEW.isInStock = 0; -- Set isInStock to 0 if quantity is 0 or negative
+    ELSE
+        SET NEW.isInStock = 1; -- Set isInStock to 1 if quantity is positive
+    END IF;
+END //
+
+DELIMITER ;
+
+
+#Ce trigger met à jour le isInStock apres un update
+DELIMITER //
+
+CREATE TRIGGER updateIsInStockBeforeUpdate
+BEFORE UPDATE ON Brand_Model
+FOR EACH ROW
+BEGIN
+    -- Check if the quantity being inserted is greater than 0
+    IF NEW.quantity <= 0 THEN
+        SET NEW.isInStock = 0; -- Set isInStock to 0 if quantity is 0 or negative
+    ELSE
+        SET NEW.isInStock = 1; -- Set isInStock to 1 if quantity is positive
+    END IF;
+END //
+
+DELIMITER ;
+
 /* Test
 
 INSERT INTO Cart(cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (2000001 ,8000002, 1, 207, 30);
