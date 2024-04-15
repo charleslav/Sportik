@@ -129,14 +129,6 @@ class Database:
         self.cursor.execute(request)
         self.cursor.execute(requestDelete)
 
-
-        requestCheckoutId = f"""SELECT checkout_id from checkout WHERE customer_id = {customerId}"""
-        self.cursor.execute(requestCheckoutId)
-        checkout_id = self.get_results()[0]["checkout_id"]
-        requestUpdate = f"""CALL updateStockQuantityAfterPurchase({checkout_id})"""
-        self.cursor.execute(requestUpdate)
-
-
     def get_cart(self, customerId):
         request = f"""SELECT cart.brand_model_id, cid, cart.quantity, brand_model.price, brand_model.quantity AS stock, 
             brand_model.brand_model_name, brand_model_image.image

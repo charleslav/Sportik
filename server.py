@@ -220,7 +220,7 @@ def add_order(token):
     try:
         body = request.get_json()
         customerId = verifyToken(token)
-        myDatabase.place_order(body["payment_method"], customerId)
+        myDatabase.place_order(body["payment_method"])
         response = {
             "status": 200,
             }
