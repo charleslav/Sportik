@@ -137,6 +137,10 @@ class Database:
         request = f"""UPDATE Cart SET quantity = {quantity} WHERE brand_model_id = {bmid} AND cid = {customerId};"""
         self.cursor.execute(request)
 
+    def delete_cart(self, customerId, bmid):
+        request = f"""DELETE FROM cart WHERE brand_model_id = {bmid} AND cid = {customerId};"""
+        self.cursor.execute(request)
+
 
 def generate_customer_data(cursor, fake):
     for i in range(100):

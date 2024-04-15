@@ -130,24 +130,25 @@ def addToCart():
 def getCart(token):
     try:
         customerId = verifyToken(token);
+        try:
+            data = myDatabase.get_cart(customerId);
+
+            response = {
+                "status": 200,
+                "cart": data
+            }
+        except Exception as e:
+            response = {
+                "status": 401,
+                "message": "Something went wrong"
+            }
     except:
         response = {
             "status": 401,
             "message": "Your are not login or your session expired"
         }
 
-    try:
-        data = myDatabase.get_cart(customerId);
 
-        response = {
-            "status": 200,
-            "cart": data
-        }
-    except Exception as e:
-        response = {
-            "status": 401,
-            "message": "Something went wrong"
-        }
     return jsonify(response)
 
 
@@ -172,6 +173,21 @@ def updateQuantity():
         }
     jsonResponse = jsonify(response)
     return jsonResponse
+
+
+@app.route("/user/<string:token>/cart/<int:bmid>", methods=["DELETE"])
+def deleteCart(token, bmid):
+    try:
+        customerId = verifyToken(token);
+        myDatabase.delete_cart(customerId, bmid)
+        response = {"status": 200}
+        return jsonify(response)
+    except:
+        response = {
+            "status": 401,
+            "message": "Your are not login or your session expired"
+        }
+
 
 
 @app.route("/token/<string:token>", methods=["GET"])
