@@ -86,6 +86,8 @@ fetch(`http://127.0.0.1:5000/product/${props.itemId}`, {
     item.value = data.productData;
     console.log(data.productData)
   }
+}).catch((error) => {
+  console.log(error)
 })
 
 

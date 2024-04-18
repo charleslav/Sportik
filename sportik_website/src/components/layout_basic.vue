@@ -7,6 +7,7 @@
     <router-link to="/login" class="sign-in-icon"><i class="fas fa-sign-in-alt"></i></router-link>
     <router-link to="/cart" class="cart-icon"><i class="fas fa-shopping-cart"></i></router-link>
     <router-link to="/logout" class="logout-icon">Logout</router-link>
+    <div class="logout-icon clickable" @click="activateDeuteranopia">Deuteranopia</div>
   </div>
   <router-view></router-view>
 </template>
@@ -40,7 +41,26 @@
   color: #FFFCF2;
 }
 
+.clickable{
+  cursor: pointer;
+}
+
 i {
   font-size: 18px;
 }
 </style>
+<script setup>
+import Cookies from 'js-cookie'
+
+function activateDeuteranopia(){
+  if (Cookies.get("deuteranopia") === "true"){
+    console.log("yes")
+    Cookies.set("deuteranopia", false);
+  }else{
+    console.log("no")
+    Cookies.set("deuteranopia", true);
+  }
+
+  window.location.reload()
+}
+</script>

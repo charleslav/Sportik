@@ -6,14 +6,17 @@ import Cookies from 'js-cookie'
 import router from '@/router'
 const hostname = inject("$hostname");
 let cartItems = ref([]);
+let isDeuteranopia = Cookies.get("deuteranopia") === "true"
 
 onMounted(async () => {
 
   await fetchCarts()
+
 })
 
 
 async function removeFromCart(item) {
+
   if (Cookies.get("user_token")) {
     await fetch(`${hostname}/user/${Cookies.get("user_token")}/cart/${item.brand_model_id}`, {
       method: "DELETE",
@@ -25,6 +28,8 @@ async function removeFromCart(item) {
       return response.json()
     }).then((data) => {
       console.log(data)
+    }).catch((error) => {
+      console.log(error)
     })
     await fetchCarts()
   }else{
@@ -78,6 +83,8 @@ async function fetchCarts(){
       }else if(data.status === 200){
         cartItems.value = data.cart;
       }
+    }).catch((error) => {
+      console.log(error)
     })
   }else{
     alert("You are not connected")
@@ -103,7 +110,7 @@ const pay = () => {
     <div v-else>
       <ul>
         <li v-for="(item, index) in cartItems" :key="index">
-          <img :src="item.image" alt="Product Image" style="width: 50px; height: 50px; margin-right: 10px;">
+          <img :src="item.image" alt="Product Image" style="width: 50px; height: 50px; margin-right: 10px;" :class="{deuteranopia : isDeuteranopia}">
           <div>
             <span>{{ item.brand_model_name }}</span><br>
             <span>Price: ${{ item.price }}</span><br>

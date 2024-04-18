@@ -1,6 +1,6 @@
 <template>
   <router-link :to="'/information/' + props.bmid" class="model-card">
-    <img :src="props.infos.image" :alt="props.infos.brand_name">
+    <img :src="props.infos.image" :alt="props.infos.brand_name" :class="{deuteranopia : isDeuteranopia}">
     <div class="product-details">
       <h2>{{ props.infos.brand_model_name }}</h2>
     </div>
@@ -8,7 +8,10 @@
 </template>
 
 <script setup>
+import Cookies from 'js-cookie'
+
 const props = defineProps(["bmid", "infos"]);
+let isDeuteranopia = Cookies.get("deuteranopia") === "true"
 </script>
 
 <style scoped>

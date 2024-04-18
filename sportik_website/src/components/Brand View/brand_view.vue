@@ -1,4 +1,5 @@
 <template>
+
   <div class="home">
     <h1>Welcome to Our Shoes Shopping Website</h1>
     <p>Check out our latest collection!</p>
@@ -27,7 +28,10 @@ let searchQuery = ref('');
 
 onMounted(async () => {
   console.log("isConnected:", isConnected);
-  await fetchBrands();
+
+
+    await fetchBrands();
+
 })
 
 async function fetchBrands(){
@@ -44,6 +48,8 @@ async function fetchBrands(){
       brands.value = data.brands;
       console.log(brands.value)
     }
+  }).catch((error) => {
+    console.log(error)
   })
 }
 

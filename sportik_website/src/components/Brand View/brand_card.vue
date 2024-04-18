@@ -1,12 +1,15 @@
 <script setup>
-const props = defineProps(["bid","infos"])
+import Cookies from 'js-cookie'
 
+const props = defineProps(["bid","infos"])
+let isDeuteranopia = Cookies.get("deuteranopia") === "true"
 
 </script>
 
 <template>
+
   <router-link :to="'/brand_model/' + props.bid" class="product-card">
-    <img :src="props.infos.brand_image" :alt="props.infos.brand_name">
+    <img :src="props.infos.brand_image" :alt="props.infos.brand_name" v-bind:class="{ deuteranopia : isDeuteranopia}">
     <div class="product-details">
       <h2>{{ props.infos.brand_name }}</h2>
     </div>

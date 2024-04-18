@@ -7,7 +7,7 @@ from faker import Faker
 
 import pymysql
 from dotenv import load_dotenv
-from pymysql import IntegrityError
+from pymysql import IntegrityError, OperationalError
 
 
 # from sql_utils import run_sql_file
@@ -50,17 +50,17 @@ class Database:
         return results
 
     def set_token(self, token, cid):
-        request = f"""INSERT INTO token (token, customer_id) VALUES ('{token}',{cid})"""
-        self.cursor.execute(request)
+        request = f"""INSERT INTO token (token, customer_id) VALUES (%s,%s)"""
+        self.cursor.execute(request, [token, cid])
     def get_user(self, username, password):
-        request = f"""SELECT cid FROM sportik.customer WHERE username = '{username}' AND password = '{password}'"""
-        self.cursor.execute(request)
+        request = f"""SELECT cid FROM sportik.customer WHERE username = %s AND password = %s"""
+        self.cursor.execute(request, [username, password])
         response = self.cursor.fetchone()
         return response
 
     def insert_customer(self, name, username, password, age, email, customer_adress):
-        request = f"""INSERT INTO sportik.customer (name, username, password, age, email, customer_adress) VALUES ('{name}','{username}','{password}',{age},'{email}','{customer_adress}')"""
-        self.cursor.execute(request)
+        request = f"""INSERT INTO sportik.customer (name, username, password, age, email, customer_adress) VALUES (%s,%s,%s,%s,%s,%s)"""
+        self.cursor.execute(request, [name, username, password, age, email, customer_adress])
         # Assuming you're using MySQL, you can use "cursor.lastrowid" to get the last inserted ID directly.
         last_inserted_id = self.cursor.lastrowid
         return last_inserted_id
@@ -72,67 +72,67 @@ class Database:
         return response
 
     def get_brand_id(self, brand_id):
-        request = f"""SELECT * FROM brand_model INNER JOIN sportik.brand_model_image on brand_model.bmid = sportik.brand_model_image.brand_model_id WHERE brand_model.brand_id = '{brand_id}'"""
-        self.cursor.execute(request)
+        request = f"""SELECT * FROM brand_model INNER JOIN sportik.brand_model_image on brand_model.bmid = sportik.brand_model_image.brand_model_id WHERE brand_model.brand_id = %s"""
+        self.cursor.execute(request, [brand_id])
         response = self.get_results()
         return response
 
     def get_products_by_id(self, id):
-        request = f"""SELECT * from product WHERE pid = '{id}'"""
-        self.cursor.execute(request)
+        request = f"""SELECT * from product WHERE pid = %s"""
+        self.cursor.execute(request, [id])
         response = self.get_results()
         return response
 
     def get_information_by_model_id(self, id):
-        request = f"""SELECT * FROM brand_model INNER JOIN sportik.brand_model_image on brand_model.bmid = sportik.brand_model_image.brand_model_id WHERE brand_model.bmid = '{id}'"""
-        self.cursor.execute(request)
+        request = f"""SELECT * FROM brand_model INNER JOIN sportik.brand_model_image on brand_model.bmid = sportik.brand_model_image.brand_model_id WHERE brand_model.bmid = %s"""
+        self.cursor.execute(request, [id])
         response = self.get_results()
         return response
 
     def get_customer_id_from_token(self, token):
-        request = f"""SELECT customer_id FROM token WHERE token = '{token}'"""
-        self.cursor.execute(request)
+        request = f"""SELECT customer_id FROM token WHERE token = %s"""
+        self.cursor.execute(request, [token])
         response = self.get_results()
         return response
 
     def add_review(self, customer_id, bmid, comment, rating):
-        request = f"""INSERT INTO customer_review (customer_id, brand_model_id, brand_rating_review, review) VALUES ({customer_id}, {bmid}, '{rating}', '{comment}')"""
-        self.cursor.execute(request)
+        request = f"""INSERT INTO customer_review (customer_id, brand_model_id, brand_rating_review, review) VALUES (%s, %s, %s, %s)"""
+        self.cursor.execute(request, [customer_id, bmid, rating, comment])
 
     def get_review_for_model(self, bmid):
-        request = f"""SELECT * FROM customer_review INNER JOIN customer on customer_review.customer_id = customer.cid WHERE brand_model_id = {bmid}"""
-        self.cursor.execute(request)
+        request = f"""SELECT * FROM customer_review INNER JOIN customer on customer_review.customer_id = customer.cid WHERE brand_model_id = %s"""
+        self.cursor.execute(request, [bmid])
         response = self.get_results()
         return response
 
     def add_to_cart(self, customer_id, bmid, quantity):
-        requestBrandModel = f"""SELECT price, discount_id FROM brand_model WHERE bmid = {bmid}"""
-        self.cursor.execute(requestBrandModel)
+        requestBrandModel = f"""SELECT price, discount_id FROM brand_model WHERE bmid = %s"""
+        self.cursor.execute(requestBrandModel, [bmid])
         response = self.get_results()
         price = response[0]["price"]
         discount_id = response[0]["discount_id"]
 
         if discount_id is not None:
-            requestDiscountTotal = f"""SELECT discount_rate FROM discount WHERE did = {discount_id}"""
-            self.cursor.execute(requestDiscountTotal)
+            requestDiscountTotal = f"""SELECT discount_rate FROM discount WHERE did = %s"""
+            self.cursor.execute(requestDiscountTotal, [discount_id])
             response = self.get_results()
             discount_rate = response[0]["discount_rate"]
         else:
             discount_rate = 0
 
-        request = f"""INSERT INTO cart (cid, brand_model_id, quantity, order_total, order_total_discount) VALUES ({customer_id}, {bmid}, {quantity}, {price}, {discount_rate})"""
-        self.cursor.execute(request)
+        request = f"""INSERT INTO cart (cid, brand_model_id, quantity, order_total, order_total_discount) VALUES (%s, %s, %s, %s, %s)"""
+        self.cursor.execute(request, [customer_id, bmid, quantity, price, discount_rate])
 
     def place_order(self, payment_method, customerId):
-        request = f"""INSERT INTO orders (payment_method, payment_status) VALUES ('{payment_method}', 'Succes')"""
-        requestDelete = f"""DELETE FROM cart WHERE cid = {customerId}"""
-        requestCheckoutId = f"""SELECT checkout_id from checkout WHERE customer_id = {customerId}"""
-        self.cursor.execute(requestCheckoutId)
+        request = f"""INSERT INTO orders (payment_method, payment_status) VALUES (%s, 'Succes')"""
+        requestDelete = f"""DELETE FROM cart WHERE cid = %s"""
+        requestCheckoutId = f"""SELECT checkout_id from checkout WHERE customer_id = %s"""
+        self.cursor.execute(requestCheckoutId, [customerId])
         checkout_id = self.get_results()[0]["checkout_id"]
-        requestUpdate = f"""CALL updateStockQuantityAfterPurchase({checkout_id})"""
-        self.cursor.execute(requestUpdate)
-        self.cursor.execute(request)
-        self.cursor.execute(requestDelete)
+        requestUpdate = f"""CALL updateStockQuantityAfterPurchase(%s)"""
+        self.cursor.execute(requestUpdate, [checkout_id])
+        self.cursor.execute(request, [payment_method])
+        self.cursor.execute(requestDelete, [customerId])
 
     def get_cart(self, customerId):
         request = f"""SELECT cart.brand_model_id, cid, cart.quantity, brand_model.price, brand_model.quantity AS stock, 
@@ -141,27 +141,27 @@ class Database:
             INNER JOIN Brand_Model
             ON Cart.brand_model_id = Brand_Model.bmid
             INNER JOIN brand_model_image
-            on Brand_Model.bmid = brand_model_image.brand_model_id WHERE cid = {customerId} AND image_type = "main";"""
-        self.cursor.execute(request)
+            on Brand_Model.bmid = brand_model_image.brand_model_id WHERE cid = %s AND image_type = "main";"""
+        self.cursor.execute(request, [customerId])
         response = self.get_results()
         return response
 
     def update_quantity_cart(self, customerId, bmid, quantity):
-        request = f"""UPDATE Cart SET quantity = {quantity} WHERE brand_model_id = {bmid} AND cid = {customerId};"""
-        self.cursor.execute(request)
+        request = f"""UPDATE Cart SET quantity = %s WHERE brand_model_id = %s AND cid = %s;"""
+        self.cursor.execute(request, [quantity, bmid, customerId])
 
     def delete_cart(self, customerId, bmid):
-        request = f"""DELETE FROM cart WHERE brand_model_id = {bmid} AND cid = {customerId};"""
-        self.cursor.execute(request)
+        request = f"""DELETE FROM cart WHERE brand_model_id = %s AND cid = %s;"""
+        self.cursor.execute(request, [bmid, customerId])
 
     def get_checkout(self, customerId):
-        request = f"""SELECT * FROM checkout WHERE customer_id = {customerId};"""
-        self.cursor.execute(request)
+        request = f"""SELECT * FROM checkout WHERE customer_id = %s;"""
+        self.cursor.execute(request, [customerId])
         response = self.get_results()
-        requestUpdate = f"""CALL updateCheckout({response[0].checkout_id});"""
-        self.cursor.execute(requestUpdate)
-        request = f"""SELECT * FROM checkout WHERE customer_id = {customerId};"""
-        self.cursor.execute(request)
+        requestUpdate = f"""CALL updateCheckout(%s);"""
+        self.cursor.execute(requestUpdate, [response[0].checkout_id])
+        request = f"""SELECT * FROM checkout WHERE customer_id = %s;"""
+        self.cursor.execute(request, [customerId])
         response = self.get_results()
 
         return response
@@ -591,7 +591,6 @@ def generate_brand_model_image(cursor):
             request = f"""INSERT INTO Brand_model_image (brand_model_id, image_type, image)
                             VALUES({brand_model_id}, 'main', '{image_url}');"""
             cursor.execute(request)
-            print(index)
             index = index + 1
 
 def generate_product_packaging_data(cursor):
@@ -657,11 +656,43 @@ def generate_reviews(num_reviews, fake):
          sql = "INSERT INTO Customer_review (customer_id, brand_model_id, brand_rating_review, review) VALUES (%s, %s, %s, %s)"
          cursor.execute(sql, (customer_id, brand_model_id, brand_rating, fake.text(max_nb_chars=2499)))
 
+def setupDatabase(cursor):
+    executeSqlFile("DB_up.sql", cursor)
+    executeSqlFile("DB_triggers.sql", cursor)
+    executeSqlFile("DB_ProceduresAndFunctions.sql", cursor)
+
+
+def executeSqlFile(filename, cursor):
+    fd = open(f"./sql/{filename}", "r")
+    sqlFile = fd.read()
+    fd.close()
+
+
+    if(filename != "DB_up.sql"):
+        sqlCommands = sqlFile.split('DELIMITER ;')
+    else:
+        sqlCommands = sqlFile.split(';')
+
+
+    for command in sqlCommands:
+        command = command.strip()
+        command = command.replace("DELIMITER //", "\n")
+        command = command.replace("END //", "END")
+
+        if command:
+            try:
+                cursor.execute(command)
+
+            except OperationalError as err:
+                print("Error:", err)
+    print("File " + filename + " executed")
+
 if __name__ == '__main__':
     db = Database()  # Create an instance of the Database class
     create_table = "CREATE TABLE todo(id INTEGER AUTO_INCREMENT, text VARCHAR(400), PRIMARY KEY(id));"
     fake = Faker()
     cursor = db.cursor  # Access the cursor from the Database instance
+    setupDatabase(cursor)
     generate_customer_data(cursor, fake)
     generate_discount_data(cursor, fake)
     generate_product_data(cursor)

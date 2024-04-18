@@ -15,9 +15,6 @@
           <label for="email">Email:</label>
           <input type="email" id="email" v-model="billingInfo.email">
         </div>
-
-        <!-- Shipping Information -->
-        <h2 v-if="!useAccountInfo">Shipping Information</h2>
         <div class="form-group" v-if="!useAccountInfo">
           <label for="address">Address:</label>
           <input type="text" id="address" v-model="shippingInfo.address">
@@ -50,7 +47,7 @@
       <div v-else>
         <!-- Cart Items -->
         <div v-for="(product, index) in cartItems" :key="index" class="cart-item">
-          <img :src="product.image" alt="Product Image" class="cart-item-image">
+          <img :src="product.image" alt="Product Image" class="cart-item-image" :class="{deuteranopia : isDeuteranopia}">
           <div class="cart-item-details">
             <div>{{ product.name }}</div>
             <div>Quantity: {{ product.quantity }}</div>
@@ -82,7 +79,7 @@ import { ref, reactive, computed, onMounted, inject } from 'vue'
 import Cookies from 'js-cookie'
 import router from '@/router'
 const hostname = inject("$hostname");
-
+let isDeuteranopia = Cookies.get("deuteranopia") === "true"
 // Reactive variables
 const billingInfo = reactive({
   name: '',
@@ -110,8 +107,10 @@ const cartIsEmpty = computed(() => cartItems.value.length === 0);
 
 // Fetch cart data on component mount
 onMounted(async () => {
-  await fetchCheckout();
-  await fetchCarts();
+
+    await fetchCheckout();
+    await fetchCarts();
+
 });
 
 // Fetch checkout data
@@ -123,6 +122,8 @@ async function fetchCheckout() {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }
+    }).catch((error) => {
+      console.log(error)
     });
 
     const data = await response.json();
@@ -146,6 +147,8 @@ async function fetchCarts() {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }
+    }).catch((error) => {
+      console.log(error)
     });
 
     const data = await response.json();
@@ -160,30 +163,34 @@ async function fetchCarts() {
 }
 
 async function fetchPlaceorder() {
-  if (Cookies.get("user_token")) {
-    const response = await fetch(`${hostname}/user/${Cookies.get("user_token")}/place_order`, {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
 
-        payment_method: paymentInfo.payment_method
-      })
+    if (Cookies.get("user_token")) {
+      const response = await fetch(`${hostname}/user/${Cookies.get("user_token")}/place_order`, {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
 
-    });
+          payment_method: paymentInfo.payment_method
+        })
 
-    const data = await response.json();
-    if (data.status === 401) {
-      alert(data.message);
-    } else if (data.status === 200) {
-      alert("Order placed")
-      router.push("/")
+      }).catch((error) => {
+        console.log(error)
+      });
+
+      const data = await response.json();
+      if (data.status === 401) {
+        alert(data.message);
+      } else if (data.status === 200) {
+        alert("Order placed")
+        router.push("/")
+      }
+    } else {
+      alert("You are not connected");
     }
-  } else {
-    alert("You are not connected");
-  }
+
 }
 
 // Calculate product subtotal

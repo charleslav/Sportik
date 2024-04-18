@@ -56,18 +56,18 @@ def registerUser():
         if err.args[0] == 3819:
             response = {
                 "status": 401,
-                "message": "Votre âge n'est pas conforme à nos normes"
+                "message": "Your age does not conform to our policies"
             }
     except IntegrityError as err:
         if err.args[0] == 1062:
             response = {
                 "status": 401,
-                "message": "Votre mail est déjà enregistré"
+                "message": "Your email is already registered"
             }
     except Exception as err:
         response = {
             "status": 401,
-            "message": "Mauvaise enregistrement"
+            "message": "Semething went wrong"
         }
 
     return jsonify(response)

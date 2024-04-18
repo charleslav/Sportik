@@ -8,11 +8,17 @@ let brand_model_list = ref([])
 
 
 onMounted(async () => {
+
   await fetchBrandModel()
+
+
+
+
 })
 
 
 async function fetchBrandModel() {
+
   fetch('http://127.0.0.1:5000/brands/' + props.brandId, {
     method: 'get',
     headers: {
@@ -26,7 +32,10 @@ async function fetchBrandModel() {
     if (data.status === 200) {
       brand_model_list.value = data.brandModel
     }
+  }).catch((error) => {
+    console.log(error)
   })
+
 }
 
 </script>

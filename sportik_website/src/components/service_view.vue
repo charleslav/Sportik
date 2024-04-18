@@ -5,16 +5,16 @@
       Welcome to our shopping website service! We provide a wide range of high-quality products to meet your shopping needs.
     </p>
     <p>
-      At our service, you'll find everything from electronics and gadgets to fashion, home decor, and much more. We strive to offer competitive prices and excellent customer service to ensure your shopping experience is enjoyable and hassle-free.
+      At our service, you'll find everything from boots to ballet shoes. We strive to offer competitive prices and excellent customer service to ensure your shopping experience is enjoyable and hassle-free.
     </p>
     <p>
-      Whether you're looking for the latest  trendy clothing, or unique gifts, we've got you covered. Browse our collection today and discover the convenience of online shopping with us.
+      Whether you're looking for the latest  trendy shoes, or unique gifts, we've got you covered. Browse our collection today and discover the convenience of online shopping with us.
     </p>
   </div>
 </template>
 
 <script setup>
-// No script logic needed for this simple page
+
 </script>
 
 <style scoped>

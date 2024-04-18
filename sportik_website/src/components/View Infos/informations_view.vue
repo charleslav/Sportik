@@ -2,7 +2,7 @@
 import { inject, onMounted, ref } from 'vue'
 import Cookies from 'js-cookie'
 
-
+let isDeuteranopia = Cookies.get("deuteranopia") === "true"
 const props = defineProps(["brandModelId"]);
 const hostname = inject("$hostname");
 const infosBrandModel = ref({});
@@ -131,7 +131,7 @@ async function fetchReview() {
     <div class="brand-info">
 
       <div class="brand-image">
-        <img :src="infosBrandModel.image" alt="Brand Image">
+        <img :src="infosBrandModel.image" alt="Brand Image" :class="{deuteranopia : isDeuteranopia}">
       </div>
 
       <div class="brand-details">

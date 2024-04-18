@@ -27,6 +27,7 @@ const errorMessage = ref('');
 const hostname = inject("$hostname");
 
 const login = () => {
+
   fetch(`${hostname}/login`, {
     method: "post",
     headers: {
